@@ -3,8 +3,10 @@ import { PriorityBadge } from '../common/PriorityBadge';
 import { ProgressBar } from '../common/ProgressBar';
 import { Avatar } from '../common/Avatar';
 import { DocumentIcon, CommentIcon } from '../common/Icons';
+import { useAuth } from '../../context/AuthContext';
 
 export function TaskCard({ task, onDragStart, onClick }) {
+  const { canManipulateTasks } = useAuth();
   const note = task.description || task.background;
   const attachCount = task.attachmentsCount ?? task.attachments_count ?? (task.title.length % 3);
   const commentCount = task.commentsCount ?? task.comments_count ?? ((task.title.length % 5) + 1);
@@ -21,8 +23,8 @@ export function TaskCard({ task, onDragStart, onClick }) {
 
   return (
     <article
-      className="task-card"
-      draggable
+      className={`task-card ${!canManipulateTasks ? 'card-readonly' : ''}`}
+      draggable={canManipulateTasks}
       onDragStart={(e) => onDragStart(e, task.id)}
       onClick={() => onClick(task)}
       tabIndex={0}

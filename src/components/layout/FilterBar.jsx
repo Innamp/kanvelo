@@ -1,5 +1,7 @@
 import React from 'react';
 import { SearchIcon, PlusIcon } from '../common/Icons';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 export function FilterBar({
   search,
@@ -8,6 +10,17 @@ export function FilterBar({
   onSortChange,
   onOpenCreate
 }) {
+  const { canManipulateTasks, isViewer } = useAuth();
+  const { showToast } = useToast();
+
+  const handleAddClick = () => {
+    if (!canManipulateTasks) {
+      showToast('Viewers have read-only permissions and cannot create tasks');
+      return;
+    }
+    onOpenCreate();
+  };
+
   return (
     <div className="action-filter-bar">
       <div className="action-filters-left">
@@ -46,9 +59,14 @@ export function FilterBar({
         </button>
       </div>
 
-      <button className="btn-add-task-yellow" onClick={onOpenCreate} type="button">
+      <button
+        className={`btn-add-task-yellow ${isViewer ? 'btn-disabled-viewer' : ''}`}
+        onClick={handleAddClick}
+        type="button"
+        title={isViewer ? 'Read-only mode (Viewer)' : 'Add new sprint task'}
+      >
         <PlusIcon size={16} />
-        Add New Task
+        {isViewer ? 'View Only' : 'Add New Task'}
       </button>
     </div>
   );

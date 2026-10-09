@@ -52,3 +52,16 @@ export const DEMO_AVATARS = [
   'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop',
   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop'
 ];
+
+export const ROLES = {
+  ADMIN: 'administrator',
+  CONTRIBUTOR: 'contributor',
+  VIEWER: 'viewer'
+};
+
+export const ROLE_LABELS = {
+  [ROLES.ADMIN]: 'Administrator',
+  [ROLES.CONTRIBUTOR]: 'Contributor',
+  [ROLES.VIEWER]: 'Viewer'
+};
+

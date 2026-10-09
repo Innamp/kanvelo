@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { PRIORITIES } from '../../constants';
+import { useAuth } from '../../context/AuthContext';
 
 export function TaskEditModal({ task, onClose, onSave, onDelete }) {
+  const { canManipulateTasks, canDeleteTasks, isViewer } = useAuth();
   const [formData, setFormData] = useState({ ...task });
 
   useEffect(() => {
@@ -9,6 +11,7 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
   }, [task]);
 
   const handleChange = (e) => {
+    if (!canManipulateTasks) return;
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -18,6 +21,7 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!canManipulateTasks) return;
     onSave(formData);
   };
 
@@ -25,9 +29,27 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
       <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
-          <h2 id="editModalTitle">Edit Task Details</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <h2 id="editModalTitle">{canManipulateTasks ? 'Edit Task Details' : 'Task Details'}</h2>
+            {isViewer && (
+              <span className="role-pill-badge role-viewer" style={{ fontSize: 11, padding: '2px 8px' }}>
+                Read-Only (Viewer)
+              </span>
+            )}
+          </div>
           <button className="modal-close-icon" onClick={onClose} aria-label="Close modal">✕</button>
         </div>
+
+        {isViewer && (
+          <div className="modal-readonly-banner">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0 }}>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <span>You are viewing this task in read-only mode. Only Contributors and Administrators can make changes.</span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="modal-form-content">
@@ -40,6 +62,7 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
                 className="form-input-field"
                 value={formData.title || ''}
                 onChange={handleChange}
+                disabled={!canManipulateTasks}
                 required
               />
             </div>
@@ -54,6 +77,7 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
                   className="form-input-field"
                   value={formData.platform || ''}
                   onChange={handleChange}
+                  disabled={!canManipulateTasks}
                 />
               </div>
 
@@ -66,6 +90,7 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
                   className="form-input-field"
                   value={formData.assignee || ''}
                   onChange={handleChange}
+                  disabled={!canManipulateTasks}
                 />
               </div>
             </div>
@@ -79,6 +104,7 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
                   className="form-input-field"
                   value={formData.stage || 'todo'}
                   onChange={handleChange}
+                  disabled={!canManipulateTasks}
                 >
                   <option value="todo">To Do</option>
                   <option value="in-progress">In Progress</option>
@@ -95,6 +121,7 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
                   className="form-input-field"
                   value={formData.priority || PRIORITIES.MEDIUM}
                   onChange={handleChange}
+                  disabled={!canManipulateTasks}
                 >
                   <option value={PRIORITIES.HIGH}>High</option>
                   <option value={PRIORITIES.MEDIUM}>Medium</option>
@@ -116,6 +143,7 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
                   className="form-input-field"
                   value={formData.progress || 0}
                   onChange={handleChange}
+                  disabled={!canManipulateTasks}
                 />
               </div>
 
@@ -128,6 +156,7 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
                   className="form-input-field"
                   value={formData.mandays || '5'}
                   onChange={handleChange}
+                  disabled={!canManipulateTasks}
                 />
               </div>
             </div>
@@ -141,20 +170,37 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
                 rows="3"
                 value={formData.description || ''}
                 onChange={handleChange}
+                disabled={!canManipulateTasks}
               />
             </div>
           </div>
 
           <div className="modal-foot">
-            <button
-              type="button"
-              className="pill-action-btn"
-              style={{ color: '#ef4444' }}
-              onClick={() => onDelete(formData.id)}
-            >
-              Delete
-            </button>
-            <button type="submit" className="btn-add-task-yellow">Save Changes</button>
+            {canDeleteTasks ? (
+              <button
+                type="button"
+                className="pill-action-btn"
+                style={{ color: '#ef4444' }}
+                onClick={() => onDelete(formData.id)}
+              >
+                Delete
+              </button>
+            ) : <div />}
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              {!canManipulateTasks ? (
+                <button type="button" className="pill-action-btn" onClick={onClose}>
+                  Close
+                </button>
+              ) : (
+                <>
+                  <button type="button" className="pill-action-btn" onClick={onClose}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn-add-task-yellow">Save Changes</button>
+                </>
+              )}
+            </div>
           </div>
         </form>
       </div>

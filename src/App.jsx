@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { VIEWS, PRIORITY_WEIGHTS } from './constants';
 import { ToastProvider, useToast } from './context/ToastContext';
+import { AuthProvider } from './context/AuthContext';
 import { useTasks } from './hooks/useTasks';
 
 import { Sidebar } from './components/layout/Sidebar';
@@ -15,6 +16,7 @@ import { OverviewView, CalendarView, DocumentsView, MessagesView } from './compo
 
 import { TaskEditModal } from './components/modals/TaskEditModal';
 import { TaskCreateModal } from './components/modals/TaskCreateModal';
+import { UserControlModal } from './components/modals/UserControlModal';
 
 function TaskManagerApp() {
   const { showToast } = useToast();
@@ -36,6 +38,7 @@ function TaskManagerApp() {
   // Modal State
   const [editingTask, setEditingTask] = useState(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isUserControlOpen, setIsUserControlOpen] = useState(false);
 
   // Filter & Sort
   const filteredTasks = useMemo(() => {
@@ -86,7 +89,11 @@ function TaskManagerApp() {
       <Sidebar currentView={currentView} onViewChange={setCurrentView} />
 
       <main className="workspace">
-        <Header search={search} onSearchChange={setSearch} />
+        <Header
+          search={search}
+          onSearchChange={setSearch}
+          onOpenUserControl={() => setIsUserControlOpen(true)}
+        />
         <ProjectBanner />
         <ViewTabs currentView={currentView} onViewChange={setCurrentView} />
 
@@ -144,6 +151,11 @@ function TaskManagerApp() {
         onClose={() => setIsCreateOpen(false)}
         onCreate={handleCreateTask}
       />
+
+      <UserControlModal
+        isOpen={isUserControlOpen}
+        onClose={() => setIsUserControlOpen(false)}
+      />
     </div>
   );
 }
@@ -151,7 +163,9 @@ function TaskManagerApp() {
 export default function App() {
   return (
     <ToastProvider>
-      <TaskManagerApp />
+      <AuthProvider>
+        <TaskManagerApp />
+      </AuthProvider>
     </ToastProvider>
   );
 }
