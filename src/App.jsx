@@ -95,11 +95,6 @@ function TaskManagerApp() {
           onSearchChange={setSearch}
           sortBy={sortBy}
           onSortChange={setSortBy}
-          sprintId={sprintId}
-          onSprintChange={(id) => {
-            setSprintId(id);
-            showToast(`Switched sprint`);
-          }}
           onOpenCreate={() => setIsCreateOpen(true)}
         />
 

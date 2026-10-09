@@ -2,35 +2,35 @@
 
 :root {
   /* Canvas & Base background matching reference image */
-  --bg-page: #dce7e1;
-  --bg-app-shell: #f3f8f6;
+  --bg-page: #edf5f1;
+  --bg-app-shell: #edf5f1;
   --bg-white: #ffffff;
 
   /* Accent & Theme */
-  --accent-yellow: #f5c242;
-  --accent-yellow-hover: #eab42e;
-  --accent-teal: #178a70;
-  --accent-teal-track: #d6eae2;
-  --accent-teal-badge-bg: #dcf5ed;
+  --accent-yellow: #f6c445;
+  --accent-yellow-hover: #e5b332;
+  --accent-teal: #0f766e;
+  --accent-teal-track: #d5ece4;
+  --accent-teal-badge-bg: #daf5ed;
   --accent-teal-badge-text: #177d66;
 
   /* Kanban Columns */
-  --col-todo-bg: #fdecf2;
+  --col-todo-bg: #fee5ec;
   --col-todo-dot: #e23b6b;
-  --col-progress-bg: #fef2e4;
+  --col-progress-bg: #fef0df;
   --col-progress-dot: #e67d22;
-  --col-review-bg: #e0f4fc;
+  --col-review-bg: #def4f8;
   --col-review-dot: #0ea5e9;
-  --col-completed-bg: #ede8fc;
+  --col-completed-bg: #ede6fc;
   --col-completed-dot: #8b5cf6;
 
   /* Priority Tags */
-  --prio-high-bg: #fde2de;
-  --prio-high-text: #c93b2b;
-  --prio-med-bg: #fcf4d9;
-  --prio-med-text: #967414;
-  --prio-low-bg: #ddf6ee;
-  --prio-low-text: #198863;
+  --prio-high-bg: #fee2e2;
+  --prio-high-text: #dc2626;
+  --prio-med-bg: #f4f8e8;
+  --prio-med-text: #657914;
+  --prio-low-bg: #e0f2fe;
+  --prio-low-text: #0284c7;
 
   /* Typography & Neutrals */
   --text-primary: #111827;
@@ -39,10 +39,10 @@
   --border-subtle: #e2e8f0;
 
   /* Shadows */
-  --shadow-shell: 0 20px 40px -15px rgba(22, 45, 34, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
-  --shadow-sidebar: 0 4px 16px -2px rgba(0, 0, 0, 0.05);
+  --shadow-shell: none;
+  --shadow-sidebar: 0 4px 20px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 2px 6px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
-  --shadow-card-hover: 0 10px 20px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
+  --shadow-card-hover: 0 8px 18px -2px rgba(15, 23, 42, 0.08);
   --shadow-modal: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
 
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -76,17 +76,17 @@ body {
   overflow: hidden;
 }
 
-/* Master App Canvas - Full Width Viewport */
+/* Master App Canvas - Full Viewport */
 .app-shell {
-  width: 100%;
-  max-width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
   background-color: var(--bg-app-shell);
   border-radius: 0;
   box-shadow: none;
   display: flex;
-  padding: 16px 20px;
-  gap: 18px;
+  padding: 16px 24px;
+  gap: 20px;
   overflow: hidden;
   position: relative;
   flex: 1;
@@ -96,17 +96,18 @@ body {
 
 /* Floating Left Sidebar */
 .app-sidebar {
-  width: 68px;
+  width: 64px;
   background: var(--bg-white);
-  border-radius: 24px;
+  border-radius: 28px;
   box-shadow: var(--shadow-sidebar);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 0;
+  padding: 18px 0;
   flex-shrink: 0;
   z-index: 10;
+  height: calc(100vh - 32px);
 }
 
 .sidebar-top {
@@ -435,7 +436,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   flex-shrink: 0;
 }
 
@@ -447,7 +448,7 @@ body {
 
 .filter-search-box {
   position: relative;
-  width: 220px;
+  width: 200px;
 }
 
 .filter-search-box svg {
@@ -489,16 +490,16 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 10px 20px;
+  padding: 9px 18px;
   background: var(--accent-yellow);
   border: none;
   border-radius: 9999px;
   color: #111827;
   font-family: inherit;
   font-size: 13.5px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(245, 194, 66, 0.35);
+  box-shadow: 0 3px 10px rgba(246, 196, 69, 0.35);
   transition: all 0.2s ease;
 }
 
@@ -508,13 +509,13 @@ body {
 }
 
 /* ============================================================
-   KANBAN BOARD - FIXED WIDTH 4 COLUMNS
+   KANBAN BOARD - EXACT REFERENCE DESIGN
    ============================================================ */
 .board-container {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 18px;
   overflow-x: auto;
   overflow-y: hidden;
   min-height: 0;
@@ -522,8 +523,8 @@ body {
 
 .kanban-column {
   width: 100%;
-  min-width: 240px;
-  border-radius: 24px;
+  min-width: 250px;
+  border-radius: 26px;
   padding: 16px 14px;
   display: flex;
   flex-direction: column;
@@ -538,7 +539,7 @@ body {
 .col-completed { background: var(--col-completed-bg); }
 
 .kanban-column.drag-over {
-  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.15);
 }
 
 .col-header-bar {
@@ -546,7 +547,7 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
-  padding: 0 6px;
+  padding: 0 4px;
   flex-shrink: 0;
 }
 
@@ -557,8 +558,8 @@ body {
 }
 
 .col-header-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   display: inline-block;
 }
@@ -570,8 +571,8 @@ body {
 .col-completed .col-header-dot { background: var(--col-completed-dot); }
 
 .col-header-title {
-  font-size: 14.5px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   color: #111827;
 }
 
@@ -582,6 +583,7 @@ body {
   font-size: 16px;
   cursor: pointer;
   padding: 2px 6px;
+  line-height: 1;
 }
 
 /* Column Cards Scrollable Stack */

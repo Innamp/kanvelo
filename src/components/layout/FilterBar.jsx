@@ -1,5 +1,4 @@
 import React from 'react';
-import { SPRINTS } from '../../constants';
 import { SearchIcon, PlusIcon } from '../common/Icons';
 
 export function FilterBar({
@@ -7,8 +6,6 @@ export function FilterBar({
   onSearchChange,
   sortBy,
   onSortChange,
-  sprintId,
-  onSprintChange,
   onOpenCreate
 }) {
   return (
@@ -26,7 +23,7 @@ export function FilterBar({
           />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 13, color: '#64748b', fontWeight: 600 }}>Sort by:</span>
           <select
             className="pill-dropdown"
@@ -41,18 +38,7 @@ export function FilterBar({
           </select>
         </div>
 
-        <select
-          className="pill-dropdown"
-          value={sprintId}
-          onChange={(e) => onSprintChange(e.target.value)}
-          aria-label="Select sprint"
-        >
-          {SPRINTS.map(s => (
-            <option key={s.id} value={s.id}>{s.label}</option>
-          ))}
-        </select>
-
-        <button className="pill-action-btn">
+        <button className="pill-action-btn" type="button">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
           </svg>
@@ -60,8 +46,8 @@ export function FilterBar({
         </button>
       </div>
 
-      <button className="btn-add-task-yellow" onClick={onOpenCreate}>
-        <PlusIcon />
+      <button className="btn-add-task-yellow" onClick={onOpenCreate} type="button">
+        <PlusIcon size={16} />
         Add New Task
       </button>
     </div>

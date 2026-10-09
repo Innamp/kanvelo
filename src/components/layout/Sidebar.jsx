@@ -1,6 +1,16 @@
 import React from 'react';
 import { VIEWS } from '../../constants';
-import { StarIcon, HomeIcon, BoardIcon, ListIcon, UsersIcon, CalendarIcon, SettingsIcon } from '../common/Icons';
+import {
+  StarIcon,
+  HomeIcon,
+  BoardIcon,
+  CheckCircleIcon,
+  UsersIcon,
+  CalendarIcon,
+  SettingsIcon,
+  HeadsetIcon,
+  LogoutIcon
+} from '../common/Icons';
 
 export function Sidebar({ currentView, onViewChange }) {
   return (
@@ -35,11 +45,11 @@ export function Sidebar({ currentView, onViewChange }) {
             title="Task List"
             aria-label="Task List"
           >
-            <ListIcon />
+            <CheckCircleIcon />
           </button>
 
           <button
-            className={`nav-icon-btn ${currentView === VIEWS.OVERVIEW ? 'active' : ''}`}
+            className="nav-icon-btn"
             onClick={() => onViewChange(VIEWS.OVERVIEW)}
             title="Team & Workload"
             aria-label="Team & Workload"
@@ -60,7 +70,13 @@ export function Sidebar({ currentView, onViewChange }) {
 
       <div className="sidebar-bottom">
         <button className="nav-icon-btn" title="Settings" aria-label="Settings">
-          <SettingsIcon />
+          <SettingsIcon size={18} />
+        </button>
+        <button className="nav-icon-btn" title="Customer Support" aria-label="Customer Support">
+          <HeadsetIcon size={18} />
+        </button>
+        <button className="nav-icon-btn" title="Sign Out" aria-label="Sign Out">
+          <LogoutIcon size={18} />
         </button>
       </div>
     </aside>
