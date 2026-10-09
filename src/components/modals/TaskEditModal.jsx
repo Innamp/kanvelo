@@ -1,10 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { PRIORITIES } from '../../constants';
+import React, { useState, useEffect, useMemo } from 'react';
+import { PRIORITIES, DEFAULT_PLATFORMS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
+import { AutocompleteInput } from '../common/AutocompleteInput';
 
-export function TaskEditModal({ task, onClose, onSave, onDelete }) {
-  const { canManipulateTasks, canDeleteTasks, isViewer } = useAuth();
+export function TaskEditModal({
+  task,
+  onClose,
+  onSave,
+  onDelete,
+  platformSuggestions: propPlatforms,
+  assigneeSuggestions: propAssignees
+}) {
+  const { canManipulateTasks, canDeleteTasks, isViewer, users } = useAuth();
   const [formData, setFormData] = useState({ ...task });
+
+  // Suggestions for platform
+  const platforms = useMemo(() => {
+    if (propPlatforms && propPlatforms.length > 0) {
+      return Array.from(new Set([...propPlatforms, ...DEFAULT_PLATFORMS]));
+    }
+    return DEFAULT_PLATFORMS;
+  }, [propPlatforms]);
+
+  const quickPlatforms = useMemo(() => {
+    return ['AYO Toko', 'CITA', 'My Hero', 'AYO Kasir'];
+  }, []);
+
+  // Suggestions for assignee
+  const assignees = useMemo(() => {
+    if (propAssignees && propAssignees.length > 0) {
+      return propAssignees;
+    }
+    return users.map(u => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      avatar: u.avatar,
+      role: u.role
+    }));
+  }, [propAssignees, users]);
+
+  const quickAssignees = useMemo(() => {
+    return users.slice(0, 4).map(u => u.name);
+  }, [users]);
 
   useEffect(() => {
     setFormData({ ...task });
@@ -70,27 +108,31 @@ export function TaskEditModal({ task, onClose, onSave, onDelete }) {
             <div className="form-grid-2col">
               <div className="form-group-field">
                 <label htmlFor="taskPlatform">Platform</label>
-                <input
+                <AutocompleteInput
                   id="taskPlatform"
                   name="platform"
-                  type="text"
-                  className="form-input-field"
+                  placeholder="e.g. AYO Toko, CITA"
                   value={formData.platform || ''}
                   onChange={handleChange}
                   disabled={!canManipulateTasks}
+                  suggestions={platforms}
+                  quickPills={quickPlatforms}
+                  type="platform"
                 />
               </div>
 
               <div className="form-group-field">
                 <label htmlFor="taskAssignee">Assignee</label>
-                <input
+                <AutocompleteInput
                   id="taskAssignee"
                   name="assignee"
-                  type="text"
-                  className="form-input-field"
+                  placeholder="e.g. John Doe"
                   value={formData.assignee || ''}
                   onChange={handleChange}
                   disabled={!canManipulateTasks}
+                  suggestions={assignees}
+                  quickPills={quickAssignees}
+                  type="assignee"
                 />
               </div>
             </div>

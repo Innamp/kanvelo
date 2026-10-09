@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { PRIORITIES, STAGES } from '../../constants';
+import React, { useState, useMemo } from 'react';
+import { PRIORITIES, STAGES, DEFAULT_PLATFORMS } from '../../constants';
+import { useAuth } from '../../context/AuthContext';
+import { AutocompleteInput } from '../common/AutocompleteInput';
 
 const INITIAL_TASK_STATE = {
   title: '',
@@ -11,8 +13,45 @@ const INITIAL_TASK_STATE = {
   mandays: '5'
 };
 
-export function TaskCreateModal({ isOpen, onClose, onCreate }) {
+export function TaskCreateModal({
+  isOpen,
+  onClose,
+  onCreate,
+  platformSuggestions: propPlatforms,
+  assigneeSuggestions: propAssignees
+}) {
+  const { users } = useAuth();
   const [formData, setFormData] = useState(INITIAL_TASK_STATE);
+
+  // Platform suggestions list
+  const platforms = useMemo(() => {
+    if (propPlatforms && propPlatforms.length > 0) {
+      return Array.from(new Set([...propPlatforms, ...DEFAULT_PLATFORMS]));
+    }
+    return DEFAULT_PLATFORMS;
+  }, [propPlatforms]);
+
+  const quickPlatforms = useMemo(() => {
+    return ['AYO Toko', 'CITA', 'My Hero', 'AYO Kasir'];
+  }, []);
+
+  // Assignee suggestions list
+  const assignees = useMemo(() => {
+    if (propAssignees && propAssignees.length > 0) {
+      return propAssignees;
+    }
+    return users.map(u => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      avatar: u.avatar,
+      role: u.role
+    }));
+  }, [propAssignees, users]);
+
+  const quickAssignees = useMemo(() => {
+    return users.slice(0, 4).map(u => u.name);
+  }, [users]);
 
   if (!isOpen) return null;
 
@@ -55,27 +94,29 @@ export function TaskCreateModal({ isOpen, onClose, onCreate }) {
             <div className="form-grid-2col">
               <div className="form-group-field">
                 <label htmlFor="newPlatform">Platform</label>
-                <input
+                <AutocompleteInput
                   id="newPlatform"
                   name="platform"
-                  type="text"
-                  className="form-input-field"
                   placeholder="e.g. AYO Toko, CITA"
                   value={formData.platform}
                   onChange={handleChange}
+                  suggestions={platforms}
+                  quickPills={quickPlatforms}
+                  type="platform"
                 />
               </div>
 
               <div className="form-group-field">
                 <label htmlFor="newAssignee">Assignee</label>
-                <input
+                <AutocompleteInput
                   id="newAssignee"
                   name="assignee"
-                  type="text"
-                  className="form-input-field"
                   placeholder="e.g. John Doe"
                   value={formData.assignee}
                   onChange={handleChange}
+                  suggestions={assignees}
+                  quickPills={quickAssignees}
+                  type="assignee"
                 />
               </div>
             </div>

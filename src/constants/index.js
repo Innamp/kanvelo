@@ -65,4 +65,17 @@ export const ROLE_LABELS = {
   [ROLES.CONTRIBUTOR]: 'Contributor',
   [ROLES.VIEWER]: 'Viewer'
 };
-
+export const DEFAULT_PLATFORMS = [
+  'AYO Toko',
+  'CITA',
+  'My Hero',
+  'MyHero Backend',
+  'AYO Principal',
+  'OSEM',
+  'DTE',
+  'AYO Kasir',
+  'AYO Mitra',
+  'AYO Qoncierge',
+  'AMO',
+  'Mobile App'
+];

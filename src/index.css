@@ -3576,6 +3576,177 @@ body {
   font-weight: 700;
 }
 
+/* =========================================================
+   Autocomplete & Suggestion System (Platform & Assignee)
+   ========================================================= */
+
+.autocomplete-container {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.16), 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+  z-index: 1050;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: dropdownFade 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.autocomplete-dropdown-header {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 10px 4px;
+}
+
+.autocomplete-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.highlighted {
+  background: #f1f5f9;
+}
+
+.autocomplete-item.selected {
+  background: #ecfdf5;
+}
+
+.autocomplete-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.autocomplete-user-initials {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #0f766e;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.autocomplete-platform-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f766e;
+  flex-shrink: 0;
+}
+
+.autocomplete-item-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+  gap: 8px;
+}
+
+.autocomplete-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-pills-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.suggestion-pills-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.suggestion-pills-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.suggestion-chip {
+  padding: 2px 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.4;
+}
+
+.suggestion-chip:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.suggestion-chip.active {
+  background: #daf5ed;
+  color: #0f766e;
+  border-color: #99f6e4;
+  font-weight: 700;
+}
+
 
 
 

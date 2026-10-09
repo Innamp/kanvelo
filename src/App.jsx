@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { VIEWS, PRIORITY_WEIGHTS } from './constants';
+import { VIEWS, PRIORITY_WEIGHTS, DEFAULT_PLATFORMS } from './constants';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useTasks } from './hooks/useTasks';
@@ -21,6 +21,7 @@ import { LoginPage } from './components/auth/LoginPage';
 
 function TaskManagerApp() {
   const { showToast } = useToast();
+  const { users } = useAuth();
   const {
     sprintId,
     setSprintId,
@@ -30,6 +31,36 @@ function TaskManagerApp() {
     createTask,
     removeTask
   } = useTasks('sprint-10');
+
+  // Suggestions for platform and assignee
+  const platformSuggestions = useMemo(() => {
+    const fromTasks = tasks.map(t => t.platform).filter(Boolean);
+    return Array.from(new Set([...fromTasks, ...DEFAULT_PLATFORMS]));
+  }, [tasks]);
+
+  const assigneeSuggestions = useMemo(() => {
+    const list = users.map(u => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      avatar: u.avatar,
+      role: u.role
+    }));
+    const seenNames = new Set(list.map(u => u.name.toLowerCase()));
+    tasks.forEach(t => {
+      if (t.assignee && !seenNames.has(t.assignee.toLowerCase())) {
+        seenNames.add(t.assignee.toLowerCase());
+        list.push({
+          id: t.assignee,
+          name: t.assignee,
+          email: '',
+          avatar: null,
+          role: null
+        });
+      }
+    });
+    return list;
+  }, [users, tasks]);
 
   // UI State
   const [currentView, setCurrentView] = useState(VIEWS.BOARD);
@@ -155,6 +186,8 @@ function TaskManagerApp() {
           onClose={() => setEditingTask(null)}
           onSave={handleSaveEdit}
           onDelete={handleDeleteTask}
+          platformSuggestions={platformSuggestions}
+          assigneeSuggestions={assigneeSuggestions}
         />
       )}
 
@@ -162,6 +195,8 @@ function TaskManagerApp() {
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         onCreate={handleCreateTask}
+        platformSuggestions={platformSuggestions}
+        assigneeSuggestions={assigneeSuggestions}
       />
     </div>
   );
