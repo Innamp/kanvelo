@@ -11,7 +11,7 @@ import { FilterBar } from './components/layout/FilterBar';
 
 import { BoardView } from './components/board/BoardView';
 import { ListView } from './components/views/ListView';
-import { OverviewView, CalendarView } from './components/views/OverviewView';
+import { OverviewView, CalendarView, DocumentsView, MessagesView } from './components/views/OverviewView';
 
 import { TaskEditModal } from './components/modals/TaskEditModal';
 import { TaskCreateModal } from './components/modals/TaskCreateModal';
@@ -119,11 +119,19 @@ function TaskManagerApp() {
         )}
 
         {currentView === VIEWS.OVERVIEW && (
-          <OverviewView tasks={tasks} />
+          <OverviewView tasks={filteredTasks} onTaskClick={setEditingTask} />
         )}
 
         {currentView === VIEWS.CALENDAR && (
           <CalendarView />
+        )}
+
+        {currentView === VIEWS.DOCUMENTS && (
+          <DocumentsView />
+        )}
+
+        {currentView === VIEWS.MESSAGES && (
+          <MessagesView />
         )}
       </main>
 
