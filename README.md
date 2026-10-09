@@ -1,86 +1,78 @@
-# 🚀 NovaBoard - Sprint Task Manager
+# 🚀 NovaBoard - Sprint Task Manager (React.js + SQLite)
 
-A modern, high-performance interactive task management application built with a pastel Kanban design aesthetic (inspired by NovaBoard & Jira), backed by **SQLite** (`database.sqlite`) and ready for immediate deployment on GitHub or local hosting.
+A modern, high-performance task management application built with **React.js** and **Vite**, featuring a pastel Kanban aesthetic inspired by the NovaBoard reference design and Jira, with persistent storage in **SQLite** and immediate compatibility for GitHub Pages deployment.
 
 ---
 
 ## ✨ Features
 
-- **Pixel-Accurate UI Design**:
-  - Soft sage/mint canvas background with floating app container
-  - Vertical floating pill sidebar with brand icon and navigation shortcuts
-  - Top header with global search (`⌘S`), notifications, and user profile
-  - 4 Pastel Kanban columns:
+- **Built with React.js & Vite**: Fast HMR, reactive state management, and modern component architecture.
+- **Pixel-Accurate UI (Reference Design)**:
+  - Sage/mint desktop canvas background (`#dce7e1`)
+  - Floating rounded app shell (`#f3f8f6`)
+  - Floating left pill sidebar with navigation icons and active yellow Board button (`#f5c242`)
+  - Top header with search shortcut (`⌘S`), notification bell with active unread dot, and user profile chip
+  - Project banner with metadata pills, team avatars stack, and quick actions
+  - **4 Pastel Kanban Columns**:
     - 🌸 **To Do** (`#fdecf2`)
     - 🍑 **In Progress** (`#fef2e4`)
     - 🧊 **In Review** (`#e0f4fc`)
     - 🍇 **Completed** (`#ede8fc`)
-- **Interactive Kanban**:
-  - HTML5 Drag-and-Drop to move tasks between stages
-  - Progress bar with percentage and animated track
-  - Priority pills (`High`, `Medium`, `Low`)
-  - Assignee avatars, attachment indicators, and comment counters
-- **SQLite Database Integration**:
-  - Persistent storage in `database.sqlite` via lightweight `api.php`
-  - Over 490+ real sprint backlog tasks seeded from sprint tracker
-  - Sprint switcher: Sprint 10, Sprint 9, Sprint 8, and All
-- **Full CRUD Capabilities**:
-  - Add new tasks with title, platform, assignee, stage, and priority
-  - Click any card to edit details or delete task
-  - Real-time instant updates across all views
-- **Multi-View Modes**:
-  - **Board View**: 4-column drag-and-drop Kanban
-  - **List View**: Jira/Linear-style interactive table
-  - **Overview View**: Analytics dashboard with completion rate and workload metrics
-  - **Calendar View**: Sprint release timeline
-- **GitHub Ready**:
-  - Automatic fallback mode enables running on static **GitHub Pages** without server configuration.
+  - **Task Cards**: Priority tag badges (`High`, `Medium`, `Low`), bold title, notes subtitle, teal progress track with percentage, assignee avatars, attachment count, and comment count.
+- **Interactive Drag & Drop**: Move tasks smoothly across stages with real-time updates.
+- **SQLite Database Support**: Backed by `database.sqlite` (over 490+ seeded tasks).
+- **Multiple Views**: Board view, List view, Overview dashboard (metrics & velocity), and Calendar milestones.
+- **Zero Python / Zero Excel Runtime Dependency**: Completely clean and lightweight.
+- **GitHub & GitHub Pages Ready**: Includes automatic offline/fallback data sync so the demo works on static hosts without server setup.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: HTML5, Vanilla CSS3 (Custom Properties & Flexbox/Grid), Vanilla JavaScript (ES6+)
-- **Database**: SQLite3 (`database.sqlite`)
-- **Backend API**: PHP 8 (PDO SQLite) via `api.php`
+- **Frontend**: React 19, Vite, Vanilla CSS3 (Custom properties, Flexbox, Grid)
+- **Database**: SQLite (`database.sqlite`) via lightweight PHP PDO REST API (`api.php`)
+- **Offline / Static Support**: LocalStorage & static JSON dataset fallback
 
 ---
 
 ## 🚀 Getting Started
 
-### Option 1: Running with PHP Built-in Server (Recommended)
-Make sure PHP is installed, then run in the project directory:
+### 1. Install Dependencies
 ```bash
-php -S localhost:8000
+npm install
 ```
-Open **[http://localhost:8000](http://localhost:8000)** in your browser.
 
-### Option 2: Running with XAMPP
-1. Place this project inside `C:/xampp/htdocs/sprint/`
-2. Start **Apache** from the XAMPP Control Panel.
-3. Open **`http://localhost/sprint/`** in your browser.
-
-### Option 3: Deploying to GitHub & GitHub Pages
-
-To publish this project to your GitHub account:
-
-1. **Initialize Git and Commit**:
+### 2. Start Development Server
 ```bash
-git init
+npm run dev
+```
+Open **[http://localhost:5173](http://localhost:5173)** in your browser.
+
+### 3. Build for Production / GitHub Pages
+```bash
+npm run build
+```
+The optimized bundle is output to `dist/`.
+
+---
+
+## 🐙 Deploying to GitHub & GitHub Pages
+
+1. **Commit All Changes**:
+```powershell
 git add .
-git commit -m "Initial commit: NovaBoard Sprint Task Manager with SQLite"
+git commit -m "Migrate stack to React.js + SQLite and cleanup legacy files"
 ```
 
-2. **Add Remote & Push to GitHub**:
-```bash
+2. **Push to Your GitHub Repository**:
+```powershell
 git branch -M main
 git remote add origin https://github.com/<YOUR_USERNAME>/<YOUR_REPOSITORY_NAME>.git
 git push -u origin main
 ```
 
-3. **Enable GitHub Pages**:
-- Go to your repository settings on GitHub: **Settings > Pages**
-- Under **Build and deployment**, select:
-  - Source: **Deploy from a branch**
-  - Branch: `main` / `/ (root)`
-- Click **Save**. Your live app will be published instantly!
+3. **Deploy to GitHub Pages**:
+- Go to repository **Settings > Pages**
+- Set **Source** to **Deploy from a branch**
+- Select the `main` branch or use the `dist` build folder
+- Your interactive React app will be live on GitHub!

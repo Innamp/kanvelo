@@ -1,4 +1,4 @@
-{
+export const INITIAL_SPRINT_DATA = {
   "sprint-10": {
     "id": "sprint-10",
     "title": "Sprint 10 (Current)",
@@ -8948,4 +8948,4 @@
       }
     ]
   }
-}
+};

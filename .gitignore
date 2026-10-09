@@ -8,3 +8,7 @@ __pycache__/
 
 # Local logs
 *.log
+
+# Dependencies
+node_modules/
+
