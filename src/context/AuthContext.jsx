@@ -8,6 +8,11 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUserState] = useState(() => userService.getActiveUser());
   const [users, setUsers] = useState(DEFAULT_USERS);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const session = localStorage.getItem('novaboard_auth_session');
+    // If no session explicitly set, start on login page to present it
+    return session === 'true';
+  });
 
   const loadUsers = useCallback(async () => {
     try {
@@ -36,6 +41,33 @@ export function AuthProvider({ children }) {
   const setCurrentUser = useCallback((user) => {
     setCurrentUserState(user);
     userService.setActiveUser(user);
+  }, []);
+
+  const login = useCallback(async (email, password = '') => {
+    const targetEmail = (email || '').trim().toLowerCase();
+    const foundUser = users.find(u => u.email.toLowerCase() === targetEmail);
+
+    if (!foundUser) {
+      throw new Error(`No account found with email "${email}". Please choose from the available users.`);
+    }
+
+    setCurrentUserState(foundUser);
+    userService.setActiveUser(foundUser);
+    setIsAuthenticated(true);
+    localStorage.setItem('novaboard_auth_session', 'true');
+    return foundUser;
+  }, [users]);
+
+  const loginAsUser = useCallback((user) => {
+    setCurrentUserState(user);
+    userService.setActiveUser(user);
+    setIsAuthenticated(true);
+    localStorage.setItem('novaboard_auth_session', 'true');
+  }, []);
+
+  const logout = useCallback(() => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('novaboard_auth_session');
   }, []);
 
   const addUser = useCallback(async (userData) => {
@@ -84,6 +116,11 @@ export function AuthProvider({ children }) {
     addUser,
     updateUser,
     deleteUser,
+    // Auth session
+    isAuthenticated,
+    login,
+    loginAsUser,
+    logout,
     // Permissions
     isAdmin,
     isContributor,

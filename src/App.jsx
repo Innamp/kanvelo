@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { VIEWS, PRIORITY_WEIGHTS } from './constants';
 import { ToastProvider, useToast } from './context/ToastContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { useTasks } from './hooks/useTasks';
 
 import { Sidebar } from './components/layout/Sidebar';
@@ -17,6 +17,7 @@ import { OverviewView, CalendarView, DocumentsView, MessagesView } from './compo
 import { TaskEditModal } from './components/modals/TaskEditModal';
 import { TaskCreateModal } from './components/modals/TaskCreateModal';
 import { UserControlModal } from './components/modals/UserControlModal';
+import { LoginPage } from './components/auth/LoginPage';
 
 function TaskManagerApp() {
   const { showToast } = useToast();
@@ -160,11 +161,21 @@ function TaskManagerApp() {
   );
 }
 
+function AppContent() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
+  return <TaskManagerApp />;
+}
+
 export default function App() {
   return (
     <ToastProvider>
       <AuthProvider>
-        <TaskManagerApp />
+        <AppContent />
       </AuthProvider>
     </ToastProvider>
   );
