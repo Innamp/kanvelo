@@ -52,9 +52,9 @@ export function Sidebar({ currentView, onViewChange, onOpenUserControl }) {
           </button>
 
           <button
-            className="nav-icon-btn"
-            onClick={onOpenUserControl}
-            title="User Control Panel (Access & Roles)"
+            className={`nav-icon-btn ${currentView === VIEWS.USERS ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.USERS)}
+            title="User Control Panel"
             aria-label="User Control Panel"
           >
             <UsersIcon />
@@ -73,9 +73,9 @@ export function Sidebar({ currentView, onViewChange, onOpenUserControl }) {
 
       <div className="sidebar-bottom">
         <button
-          className="nav-icon-btn"
-          onClick={onOpenUserControl}
-          title="User Control & Permissions"
+          className={`nav-icon-btn ${currentView === VIEWS.USERS ? 'active' : ''}`}
+          onClick={() => onViewChange(VIEWS.USERS)}
+          title="User Control Panel"
           aria-label="Settings"
         >
           <SettingsIcon size={18} />

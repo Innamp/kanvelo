@@ -3504,15 +3504,78 @@ body {
   font-weight: 800;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .uc-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .uc-matrix-cards-grid {
-    grid-template-columns: 1fr;
-  }
+/* Dedicated User Control Page (Non-popup) matching previous design */
+.user-control-page-wrapper {
+  padding: 24px 32px 48px 32px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
 }
+
+.user-control-card-container {
+  width: 100%;
+  max-width: 860px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.uc-page-head {
+  padding: 24px 28px 16px 28px;
+}
+
+.uc-page-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.4px;
+  margin: 0 0 4px 0;
+}
+
+.role-grant-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.role-grant-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.3px;
+}
+
+.uc-tab-btn {
+  padding: 6px 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.uc-tab-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.uc-tab-btn.active {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+  font-weight: 700;
+}
+
 
 
 

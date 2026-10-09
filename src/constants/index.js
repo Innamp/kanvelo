@@ -34,7 +34,8 @@ export const VIEWS = {
   BOARD: 'board',
   CALENDAR: 'calendar',
   DOCUMENTS: 'documents',
-  MESSAGES: 'messages'
+  MESSAGES: 'messages',
+  USERS: 'users'
 };
 
 export const SPRINTS = [

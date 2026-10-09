@@ -13,10 +13,10 @@ import { FilterBar } from './components/layout/FilterBar';
 import { BoardView } from './components/board/BoardView';
 import { ListView } from './components/views/ListView';
 import { OverviewView, CalendarView, DocumentsView, MessagesView } from './components/views/OverviewView';
+import { UserControlPage } from './components/views/UserControlPage';
 
 import { TaskEditModal } from './components/modals/TaskEditModal';
 import { TaskCreateModal } from './components/modals/TaskCreateModal';
-import { UserControlModal } from './components/modals/UserControlModal';
 import { LoginPage } from './components/auth/LoginPage';
 
 function TaskManagerApp() {
@@ -39,7 +39,6 @@ function TaskManagerApp() {
   // Modal State
   const [editingTask, setEditingTask] = useState(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isUserControlOpen, setIsUserControlOpen] = useState(false);
 
   // Filter & Sort
   const filteredTasks = useMemo(() => {
@@ -90,14 +89,14 @@ function TaskManagerApp() {
       <Sidebar
         currentView={currentView}
         onViewChange={setCurrentView}
-        onOpenUserControl={() => setIsUserControlOpen(true)}
+        onOpenUserControl={() => setCurrentView(VIEWS.USERS)}
       />
 
       <main className="workspace">
         <Header
           search={search}
           onSearchChange={setSearch}
-          onOpenUserControl={() => setIsUserControlOpen(true)}
+          onOpenUserControl={() => setCurrentView(VIEWS.USERS)}
         />
         {/* Top menu (Project Banner, View Tabs, & Filter Bar) only on related task pages (Board & List) */}
         {(currentView === VIEWS.BOARD || currentView === VIEWS.LIST) && (
@@ -144,6 +143,10 @@ function TaskManagerApp() {
         {currentView === VIEWS.MESSAGES && (
           <MessagesView />
         )}
+
+        {currentView === VIEWS.USERS && (
+          <UserControlPage />
+        )}
       </main>
 
       {editingTask && (
@@ -159,11 +162,6 @@ function TaskManagerApp() {
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         onCreate={handleCreateTask}
-      />
-
-      <UserControlModal
-        isOpen={isUserControlOpen}
-        onClose={() => setIsUserControlOpen(false)}
       />
     </div>
   );
