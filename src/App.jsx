@@ -13,7 +13,6 @@ import { FilterBar } from './components/layout/FilterBar';
 import { BoardView } from './components/board/BoardView';
 import { ListView } from './components/views/ListView';
 import { OverviewView, CalendarView, DocumentsView, MessagesView } from './components/views/OverviewView';
-import { UserControlView } from './components/views/UserControlView';
 
 import { TaskEditModal } from './components/modals/TaskEditModal';
 import { TaskCreateModal } from './components/modals/TaskCreateModal';
@@ -100,18 +99,19 @@ function TaskManagerApp() {
           onSearchChange={setSearch}
           onOpenUserControl={() => setIsUserControlOpen(true)}
         />
-        <ProjectBanner />
-        <ViewTabs currentView={currentView} onViewChange={setCurrentView} />
-
-        {/* Action & Filter bar is only displayed on task-related pages (Board & List) */}
+        {/* Top menu (Project Banner, View Tabs, & Filter Bar) only on related task pages (Board & List) */}
         {(currentView === VIEWS.BOARD || currentView === VIEWS.LIST) && (
-          <FilterBar
-            search={search}
-            onSearchChange={setSearch}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            onOpenCreate={() => setIsCreateOpen(true)}
-          />
+          <>
+            <ProjectBanner />
+            <ViewTabs currentView={currentView} onViewChange={setCurrentView} />
+            <FilterBar
+              search={search}
+              onSearchChange={setSearch}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              onOpenCreate={() => setIsCreateOpen(true)}
+            />
+          </>
         )}
 
         {currentView === VIEWS.BOARD && (
@@ -143,10 +143,6 @@ function TaskManagerApp() {
 
         {currentView === VIEWS.MESSAGES && (
           <MessagesView />
-        )}
-
-        {currentView === VIEWS.USERS && (
-          <UserControlView />
         )}
       </main>
 
