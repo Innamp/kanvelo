@@ -60,30 +60,27 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  overflow-x: auto;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 16px;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Master App Canvas - Fixed Width matching reference mockup */
+/* Master App Canvas - Full Width */
 .app-shell {
-  width: 1240px;
-  min-width: 1240px;
-  max-width: 1240px;
-  height: 840px;
-  min-height: 840px;
-  max-height: 94vh;
+  width: 100%;
+  max-width: 100%;
+  height: calc(100vh - 32px);
+  min-height: 700px;
   background-color: var(--bg-app-shell);
-  border-radius: 32px;
+  border-radius: 28px;
   box-shadow: var(--shadow-shell);
   display: flex;
   padding: 16px;
   gap: 16px;
   overflow: hidden;
   position: relative;
-  flex-shrink: 0;
+  flex: 1;
 }
 
 /* Floating Left Sidebar */
@@ -504,22 +501,22 @@ body {
 .board-container {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(4, 264px);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   min-height: 0;
-  justify-content: space-between;
 }
 
 .kanban-column {
-  width: 264px;
+  width: 100%;
+  min-width: 240px;
   border-radius: 24px;
   padding: 16px 14px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   height: 100%;
-  flex-shrink: 0;
 }
 
 .col-todo { background: var(--col-todo-bg); }
