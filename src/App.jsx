@@ -88,7 +88,11 @@ function TaskManagerApp() {
 
   return (
     <div className="app-shell">
-      <Sidebar currentView={currentView} onViewChange={setCurrentView} />
+      <Sidebar
+        currentView={currentView}
+        onViewChange={setCurrentView}
+        onOpenUserControl={() => setIsUserControlOpen(true)}
+      />
 
       <main className="workspace">
         <Header
@@ -99,13 +103,16 @@ function TaskManagerApp() {
         <ProjectBanner />
         <ViewTabs currentView={currentView} onViewChange={setCurrentView} />
 
-        <FilterBar
-          search={search}
-          onSearchChange={setSearch}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          onOpenCreate={() => setIsCreateOpen(true)}
-        />
+        {/* Action & Filter bar is only displayed on task-related pages (Board & List) */}
+        {(currentView === VIEWS.BOARD || currentView === VIEWS.LIST) && (
+          <FilterBar
+            search={search}
+            onSearchChange={setSearch}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            onOpenCreate={() => setIsCreateOpen(true)}
+          />
+        )}
 
         {currentView === VIEWS.BOARD && (
           <BoardView

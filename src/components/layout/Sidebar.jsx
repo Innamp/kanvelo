@@ -13,7 +13,7 @@ import {
   LogoutIcon
 } from '../common/Icons';
 
-export function Sidebar({ currentView, onViewChange }) {
+export function Sidebar({ currentView, onViewChange, onOpenUserControl }) {
   const { logout } = useAuth();
 
   return (
@@ -52,9 +52,9 @@ export function Sidebar({ currentView, onViewChange }) {
           </button>
 
           <button
-            className={`nav-icon-btn ${currentView === VIEWS.USERS ? 'active' : ''}`}
-            onClick={() => onViewChange(VIEWS.USERS)}
-            title="User Control Panel (RBAC)"
+            className="nav-icon-btn"
+            onClick={onOpenUserControl}
+            title="User Control Panel (Access & Roles)"
             aria-label="User Control Panel"
           >
             <UsersIcon />
@@ -73,8 +73,8 @@ export function Sidebar({ currentView, onViewChange }) {
 
       <div className="sidebar-bottom">
         <button
-          className={`nav-icon-btn ${currentView === VIEWS.USERS ? 'active' : ''}`}
-          onClick={() => onViewChange(VIEWS.USERS)}
+          className="nav-icon-btn"
+          onClick={onOpenUserControl}
           title="User Control & Permissions"
           aria-label="Settings"
         >
