@@ -641,7 +641,10 @@ export default function App() {
               <div className="kpi-card">
                 <div style={{ fontSize: 12, color: '#64748b', fontWeight: 700 }}>SPRINT VELOCITY</div>
                 <div className="kpi-num">
-                  {Math.round(tasks.reduce((acc, t) => acc + (parseFloat(t.mandays) || 0), 0))} MD
+                  {Math.round(tasks.reduce((acc, t) => {
+                    const md = parseFloat(t.mandays) || 0;
+                    return acc + (md > 0 && md <= 200 ? md : 0);
+                  }, 0))} MD
                 </div>
                 <div style={{ fontSize: 12, color: '#178a70', fontWeight: 600 }}>Estimated Workload</div>
               </div>

@@ -63,15 +63,18 @@ body {
   align-items: center;
   justify-content: center;
   padding: 24px;
+  overflow-x: auto;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Master App Canvas */
+/* Master App Canvas - Fixed Width matching reference mockup */
 .app-shell {
-  width: 100%;
-  max-width: 1540px;
-  height: 94vh;
-  min-height: 780px;
+  width: 1240px;
+  min-width: 1240px;
+  max-width: 1240px;
+  height: 840px;
+  min-height: 840px;
+  max-height: 94vh;
   background-color: var(--bg-app-shell);
   border-radius: 32px;
   box-shadow: var(--shadow-shell);
@@ -80,6 +83,7 @@ body {
   gap: 16px;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 }
 
 /* Floating Left Sidebar */
@@ -495,27 +499,31 @@ body {
 }
 
 /* ============================================================
-   KANBAN BOARD - 4 COLUMNS
+   KANBAN BOARD - FIXED WIDTH 4 COLUMNS
    ============================================================ */
 .board-container {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(4, 264px);
+  gap: 16px;
   overflow: hidden;
   min-height: 0;
+  justify-content: space-between;
 }
 
 .kanban-column {
+  width: 264px;
   border-radius: 24px;
   padding: 16px 14px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   height: 100%;
+  flex-shrink: 0;
 }
 
 .col-todo { background: var(--col-todo-bg); }
+.col-progress,
 .col-in-progress { background: var(--col-progress-bg); }
 .col-review { background: var(--col-review-bg); }
 .col-completed { background: var(--col-completed-bg); }
@@ -543,9 +551,11 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  display: inline-block;
 }
 
 .col-todo .col-header-dot { background: var(--col-todo-dot); }
+.col-progress .col-header-dot,
 .col-in-progress .col-header-dot { background: var(--col-progress-dot); }
 .col-review .col-header-dot { background: var(--col-review-dot); }
 .col-completed .col-header-dot { background: var(--col-completed-dot); }
