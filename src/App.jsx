@@ -13,7 +13,7 @@ import { FilterBar } from './components/layout/FilterBar';
 import { BoardView } from './components/board/BoardView';
 import { ListView } from './components/views/ListView';
 import { OverviewView, CalendarView, DocumentsView, MessagesView } from './components/views/OverviewView';
-import { UserControlPage } from './components/views/UserControlPage';
+import { UserControlView } from './components/views/UserControlView';
 
 import { TaskEditModal } from './components/modals/TaskEditModal';
 import { TaskCreateModal } from './components/modals/TaskCreateModal';
@@ -145,7 +145,7 @@ function TaskManagerApp() {
         )}
 
         {currentView === VIEWS.USERS && (
-          <UserControlPage />
+          <UserControlView />
         )}
       </main>
 
