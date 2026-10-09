@@ -104,36 +104,40 @@ export function UserControlModal({ isOpen, onClose }) {
 
         {/* Tab 1: Users List */}
         {activeTab === 'users' && (
-          <div className="user-directory-content">
-            <div className="user-list-table">
+          <div className="user-control-body">
+            <div className="users-directory-list">
               {users.map(u => {
                 const isCurrent = u.id === currentUser?.id;
                 return (
                   <div key={u.id} className="user-row-card">
                     <div className="user-row-left">
-                      <img src={u.avatar} alt={u.name} className="user-card-avatar" />
-                      <div className="user-card-info">
-                        <div className="user-name-line">
-                          <strong>{u.name}</strong>
-                          {isCurrent && <span className="current-user-tag">You</span>}
+                      <img src={u.avatar} alt={u.name} className="user-row-avatar" />
+                      <div className="user-row-details">
+                        <div className="user-row-name-row">
+                          <strong className="user-row-name">{u.name}</strong>
+                          {isCurrent && <span className="you-badge">You</span>}
                         </div>
-                        <span className="user-email-text">{u.email}</span>
+                        <span className="user-row-email">{u.email}</span>
                       </div>
                     </div>
 
                     <div className="user-row-right">
                       {canManageUsers ? (
-                        <select
-                          className={`user-role-select role-${u.role}`}
-                          value={u.role}
-                          onChange={(e) => handleRoleChange(u, e.target.value)}
-                        >
-                          <option value={ROLES.ADMIN}>Administrator</option>
-                          <option value={ROLES.CONTRIBUTOR}>Contributor</option>
-                          <option value={ROLES.VIEWER}>Viewer</option>
-                        </select>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                          <span style={{ fontSize: 10, color: '#94a3b8', fontWeight: 600 }}>Grant Role:</span>
+                          <select
+                            className={`role-select-box role-${u.role}`}
+                            value={u.role}
+                            onChange={(e) => handleRoleChange(u, e.target.value)}
+                            title={`Grant role access to ${u.name}`}
+                          >
+                            <option value={ROLES.ADMIN}>Administrator (Full Access)</option>
+                            <option value={ROLES.CONTRIBUTOR}>Contributor (Manipulate Tasks)</option>
+                            <option value={ROLES.VIEWER}>Viewer (Read-Only)</option>
+                          </select>
+                        </div>
                       ) : (
-                        <span className={`user-role-badge role-${u.role}`}>
+                        <span className={`role-pill-badge role-${u.role}`}>
                           {ROLE_LABELS[u.role] || u.role}
                         </span>
                       )}
@@ -141,10 +145,10 @@ export function UserControlModal({ isOpen, onClose }) {
                       {canManageUsers && (
                         <button
                           className="btn-delete-user"
-                          title="Remove user"
+                          title={`Remove ${u.name}`}
                           onClick={() => handleDelete(u)}
                         >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <polyline points="3 6 5 6 21 6" />
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                           </svg>

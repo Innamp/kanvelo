@@ -1,5 +1,6 @@
 import React from 'react';
 import { VIEWS } from '../../constants';
+import { useAuth } from '../../context/AuthContext';
 import {
   StarIcon,
   HomeIcon,
@@ -13,6 +14,8 @@ import {
 } from '../common/Icons';
 
 export function Sidebar({ currentView, onViewChange }) {
+  const { logout } = useAuth();
+
   return (
     <aside className="app-sidebar" aria-label="Main Navigation">
       <div className="sidebar-top">
@@ -49,10 +52,10 @@ export function Sidebar({ currentView, onViewChange }) {
           </button>
 
           <button
-            className="nav-icon-btn"
-            onClick={() => onViewChange(VIEWS.OVERVIEW)}
-            title="Team & Workload"
-            aria-label="Team & Workload"
+            className={`nav-icon-btn ${currentView === VIEWS.USERS ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.USERS)}
+            title="User Control Panel (RBAC)"
+            aria-label="User Control Panel"
           >
             <UsersIcon />
           </button>
@@ -69,13 +72,18 @@ export function Sidebar({ currentView, onViewChange }) {
       </div>
 
       <div className="sidebar-bottom">
-        <button className="nav-icon-btn" title="Settings" aria-label="Settings">
+        <button
+          className={`nav-icon-btn ${currentView === VIEWS.USERS ? 'active' : ''}`}
+          onClick={() => onViewChange(VIEWS.USERS)}
+          title="User Control & Permissions"
+          aria-label="Settings"
+        >
           <SettingsIcon size={18} />
         </button>
         <button className="nav-icon-btn" title="Customer Support" aria-label="Customer Support">
           <HeadsetIcon size={18} />
         </button>
-        <button className="nav-icon-btn" title="Sign Out" aria-label="Sign Out">
+        <button className="nav-icon-btn" title="Sign Out" aria-label="Sign Out" onClick={logout}>
           <LogoutIcon size={18} />
         </button>
       </div>
