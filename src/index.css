@@ -1007,10 +1007,32 @@ body {
    OVERVIEW DASHBOARD - EXECUTIVE VIEW STYLES
    ============================================================ */
 .overview-dashboard-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding-bottom: 24px;
+  padding-bottom: 40px;
+  box-sizing: border-box;
+}
+
+.overview-dashboard-panel::-webkit-scrollbar {
+  width: 7px;
+}
+
+.overview-dashboard-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overview-dashboard-panel::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.overview-dashboard-panel::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .overview-kpis {
@@ -2936,12 +2958,34 @@ body {
    USER CONTROL VIEW (DEDICATED FULL-PAGE RBAC PANEL)
    ========================================================================== */
 .user-control-view-container {
-  padding: 20px 24px 40px 24px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 6px 12px 60px 12px;
   display: flex;
   flex-direction: column;
   gap: 22px;
   width: 100%;
+  box-sizing: border-box;
   animation: fadeIn 0.25s ease-out;
+}
+
+.user-control-view-container::-webkit-scrollbar {
+  width: 7px;
+}
+
+.user-control-view-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.user-control-view-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.user-control-view-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* Header Section */
