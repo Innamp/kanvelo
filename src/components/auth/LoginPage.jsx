@@ -46,7 +46,7 @@ export function LoginPage() {
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#facc15" stroke="#0f172a" />
               </svg>
-              <span className="login-brand-name">Sprint Management</span>
+              <span className="login-brand-name">Kanvelo</span>
             </div>
             <span className="login-version-tag">Sprint 10 Edition</span>
           </div>
@@ -230,7 +230,7 @@ export function LoginPage() {
                 <span className="spinner-dots">Signing in...</span>
               ) : (
                 <>
-                  <span>Sign In to Sprint Management</span>
+                  <span>Sign In to Kanvelo</span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <line x1="5" y1="12" x2="19" y2="12" />
                     <polyline points="12 5 19 12 12 19" />

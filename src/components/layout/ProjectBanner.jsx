@@ -13,7 +13,7 @@ export function ProjectBanner() {
   return (
     <section className="project-banner">
       <div className="project-title-group">
-        <h1>Sprint Management</h1>
+        <h1>Kanvelo</h1>
         <div className="project-meta-line">
           <span>Client: <strong style={{ color: 'var(--text-primary)' }}>Arcadia Solutions</strong></span>
           <span>•</span>

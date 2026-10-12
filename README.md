@@ -1,4 +1,4 @@
-# 🚀 Sprint Management (React.js + SQLite)
+# 🚀 Kanvelo (React.js + SQLite)
 
 A modern, high-performance sprint task management application built with **React.js** and **Vite**, featuring a pastel Kanban aesthetic and Jira-style workflows, with persistent storage in **SQLite** and immediate compatibility for GitHub Pages deployment.
 

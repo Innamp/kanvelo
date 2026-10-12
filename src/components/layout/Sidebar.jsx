@@ -19,7 +19,7 @@ export function Sidebar({ currentView, onViewChange, onOpenUserControl }) {
   return (
     <aside className="app-sidebar" aria-label="Main Navigation">
       <div className="sidebar-top">
-        <div className="brand-mark" title="Sprint Management">
+        <div className="brand-mark" title="Kanvelo">
           <StarIcon />
         </div>
 

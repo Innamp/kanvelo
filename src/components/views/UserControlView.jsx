@@ -129,7 +129,7 @@ export function UserControlView() {
           </div>
           <h1 className="uc-main-title">User Control Panel</h1>
           <p className="uc-sub-title">
-            Add team members, grant access roles, and control permission tiers across the Sprint Management workspace.
+            Add team members, grant access roles, and control permission tiers across the Kanvelo workspace.
           </p>
         </div>
 
@@ -393,7 +393,7 @@ export function UserControlView() {
               <span className="tier-authority">Supreme Privilege</span>
             </div>
             <p className="tier-description">
-              Has complete administrative governance over the entire Sprint Management system and team configuration.
+              Has complete administrative governance over the entire Kanvelo system and team configuration.
             </p>
             <ul className="tier-list">
               <li><span className="check">✓</span> <strong>Manage Users:</strong> Add members, remove members, grant/change roles</li>
