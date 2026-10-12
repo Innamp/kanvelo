@@ -16,7 +16,6 @@ export function UserControlView() {
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newRole, setNewRole] = useState(ROLES.CONTRIBUTOR);
-  const [newAvatar, setNewAvatar] = useState(DEMO_AVATARS[0]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Statistics
@@ -103,7 +102,7 @@ export function UserControlView() {
         name: newName.trim(),
         email: newEmail.trim(),
         role: newRole,
-        avatar: newAvatar
+        avatar: null
       });
       showToast(`New user "${newName}" added successfully!`);
       setNewName('');

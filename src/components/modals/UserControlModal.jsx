@@ -12,7 +12,6 @@ export function UserControlModal({ isOpen, onClose }) {
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newRole, setNewRole] = useState(ROLES.CONTRIBUTOR);
-  const [newAvatar, setNewAvatar] = useState(DEMO_AVATARS[0]);
   const [submitting, setSubmitting] = useState(false);
 
   if (!isOpen) return null;
@@ -54,7 +53,7 @@ export function UserControlModal({ isOpen, onClose }) {
         name: newName.trim(),
         email: newEmail.trim(),
         role: newRole,
-        avatar: newAvatar
+        avatar: null
       });
       showToast(`User ${newName} created!`);
       setNewName('');
