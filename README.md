@@ -1,6 +1,6 @@
-# 🚀 NovaBoard - Sprint Task Manager (React.js + SQLite)
+# 🚀 Sprint Management (React.js + SQLite)
 
-A modern, high-performance task management application built with **React.js** and **Vite**, featuring a pastel Kanban aesthetic inspired by the NovaBoard reference design and Jira, with persistent storage in **SQLite** and immediate compatibility for GitHub Pages deployment.
+A modern, high-performance sprint task management application built with **React.js** and **Vite**, featuring a pastel Kanban aesthetic and Jira-style workflows, with persistent storage in **SQLite** and immediate compatibility for GitHub Pages deployment.
 
 ---
 
