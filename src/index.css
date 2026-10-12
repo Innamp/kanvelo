@@ -2971,6 +2971,10 @@ body {
   animation: fadeIn 0.25s ease-out;
 }
 
+.user-control-view-container > * {
+  flex-shrink: 0;
+}
+
 .user-control-view-container::-webkit-scrollbar {
   width: 7px;
 }
@@ -3264,6 +3268,9 @@ body {
   border-radius: 20px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
   overflow-x: auto;
+  overflow-y: visible;
+  flex-shrink: 0;
+  min-height: fit-content;
 }
 
 .uc-users-table {
