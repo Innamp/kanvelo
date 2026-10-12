@@ -12,3 +12,6 @@ __pycache__/
 # Dependencies
 node_modules/
 
+# Local spreadsheets
+*.xlsx
+

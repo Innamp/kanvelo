@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { PriorityBadge } from '../common/PriorityBadge';
+import { Avatar } from '../common/Avatar';
 import { PRIORITIES, STAGES } from '../../constants';
+import { splitMultiValue } from '../../utils/taskHelpers';
 
 export function ListView({ tasks, onTaskClick }) {
   const [filters, setFilters] = useState({
@@ -19,13 +21,8 @@ export function ListView({ tasks, onTaskClick }) {
     const assignees = new Set();
 
     tasks.forEach(t => {
-      if (t.platform) platforms.add(t.platform);
-      if (t.assignee) {
-        t.assignee.split(/[,&/]/).forEach(a => {
-          const trimmed = a.trim();
-          if (trimmed) assignees.add(trimmed);
-        });
-      }
+      splitMultiValue(t.platforms || t.platform).forEach(p => platforms.add(p));
+      splitMultiValue(t.assignees || t.assignee).forEach(a => assignees.add(a));
     });
 
     return {
@@ -63,13 +60,16 @@ export function ListView({ tasks, onTaskClick }) {
 
       // 2. Platform Filter
       if (filters.platform) {
-        if ((task.platform || 'General') !== filters.platform) return false;
+        const pList = splitMultiValue(task.platforms || task.platform);
+        const match = pList.some(p => p.toLowerCase() === filters.platform.toLowerCase());
+        if (!match) return false;
       }
 
       // 3. Assignee Filter
       if (filters.assignee) {
-        const hasAssignee = (task.assignee || '').toLowerCase().includes(filters.assignee.toLowerCase());
-        if (!hasAssignee) return false;
+        const aList = splitMultiValue(task.assignees || task.assignee);
+        const match = aList.some(a => a.toLowerCase().includes(filters.assignee.toLowerCase()));
+        if (!match) return false;
       }
 
       // 4. Priority Filter
@@ -273,12 +273,35 @@ export function ListView({ tasks, onTaskClick }) {
                       <strong>{task.title}</strong>
                     </td>
                     <td className="cell-platform">
-                      <span className="platform-tag-pill">
-                        {task.platform || 'General'}
-                      </span>
+                      <div className="cell-platform-stack">
+                        {(() => {
+                          const pList = splitMultiValue(task.platforms || task.platform);
+                          if (pList.length === 0) {
+                            return <span className="platform-tag-pill">General</span>;
+                          }
+                          return pList.map((p, idx) => (
+                            <span key={idx} className="platform-tag-pill" title={`Platform: ${p}`}>
+                              {p}
+                            </span>
+                          ));
+                        })()}
+                      </div>
                     </td>
                     <td className="cell-assignee">
-                      {task.assignee || 'Unassigned'}
+                      <div className="cell-assignee-stack">
+                        {(() => {
+                          const aList = splitMultiValue(task.assignees || task.assignee);
+                          if (aList.length === 0) {
+                            return <span className="assignee-empty-text">Unassigned</span>;
+                          }
+                          return aList.map((a, idx) => (
+                            <div key={idx} className="assignee-row-chip" title={`Assignee: ${a}`}>
+                              <Avatar name={a} size={20} />
+                              <span className="assignee-name-text">{a}</span>
+                            </div>
+                          ));
+                        })()}
+                      </div>
                     </td>
                     <td className="cell-priority">
                       <PriorityBadge priority={task.priority} />

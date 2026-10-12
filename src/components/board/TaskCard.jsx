@@ -4,6 +4,7 @@ import { ProgressBar } from '../common/ProgressBar';
 import { Avatar } from '../common/Avatar';
 import { DocumentIcon, CommentIcon } from '../common/Icons';
 import { useAuth } from '../../context/AuthContext';
+import { splitMultiValue } from '../../utils/taskHelpers';
 
 export function TaskCard({ task, onDragStart, onClick }) {
   const { canManipulateTasks } = useAuth();
@@ -11,14 +12,9 @@ export function TaskCard({ task, onDragStart, onClick }) {
   const attachCount = task.attachmentsCount ?? task.attachments_count ?? (task.title.length % 3);
   const commentCount = task.commentsCount ?? task.comments_count ?? ((task.title.length % 5) + 1);
 
-  // Parse multiple assignees if provided as a comma or & separated string or array
-  const rawAssignees = Array.isArray(task.assignees)
-    ? task.assignees
-    : (task.assignee || 'Sarah')
-        .split(/[,&/]/)
-        .map(a => a.trim())
-        .filter(Boolean);
-
+  // Parse multiple platforms and assignees cleanly
+  const platformsList = splitMultiValue(task.platforms || task.platform);
+  const rawAssignees = splitMultiValue(task.assignees || task.assignee);
   const assigneesList = rawAssignees.length > 0 ? rawAssignees : ['Sarah'];
 
   return (
@@ -33,6 +29,20 @@ export function TaskCard({ task, onDragStart, onClick }) {
     >
       <div className="card-top-row">
         <PriorityBadge priority={task.priority} />
+        {platformsList.length > 0 && (
+          <div className="card-platforms-wrap">
+            {platformsList.slice(0, 2).map((p, idx) => (
+              <span key={idx} className="card-platform-pill" title={`Platform: ${p}`}>
+                {p}
+              </span>
+            ))}
+            {platformsList.length > 2 && (
+              <span className="card-platform-pill card-platform-more" title={platformsList.slice(2).join(', ')}>
+                +{platformsList.length - 2}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       <h3 className="card-task-title">{task.title}</h3>
@@ -54,6 +64,11 @@ export function TaskCard({ task, onDragStart, onClick }) {
               className="card-assignee-avatar"
             />
           ))}
+          {assigneesList.length > 4 && (
+            <div className="avatar-stack-more" title={assigneesList.slice(4).join(', ')}>
+              +{assigneesList.length - 4}
+            </div>
+          )}
         </div>
 
         <div className="card-meta-counts">

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { VIEWS, PRIORITY_WEIGHTS, DEFAULT_PLATFORMS } from './constants';
+import { extractUniquePlatforms, extractUniqueAssignees, splitMultiValue } from './utils/taskHelpers';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useTasks } from './hooks/useTasks';
@@ -34,32 +35,11 @@ function TaskManagerApp() {
 
   // Suggestions for platform and assignee
   const platformSuggestions = useMemo(() => {
-    const fromTasks = tasks.map(t => t.platform).filter(Boolean);
-    return Array.from(new Set([...fromTasks, ...DEFAULT_PLATFORMS]));
+    return extractUniquePlatforms(tasks, DEFAULT_PLATFORMS);
   }, [tasks]);
 
   const assigneeSuggestions = useMemo(() => {
-    const list = users.map(u => ({
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      avatar: u.avatar,
-      role: u.role
-    }));
-    const seenNames = new Set(list.map(u => u.name.toLowerCase()));
-    tasks.forEach(t => {
-      if (t.assignee && !seenNames.has(t.assignee.toLowerCase())) {
-        seenNames.add(t.assignee.toLowerCase());
-        list.push({
-          id: t.assignee,
-          name: t.assignee,
-          email: '',
-          avatar: null,
-          role: null
-        });
-      }
-    });
-    return list;
+    return extractUniqueAssignees(tasks, users);
   }, [users, tasks]);
 
   // UI State
@@ -77,12 +57,16 @@ function TaskManagerApp() {
     const query = search.toLowerCase().trim();
 
     if (query) {
-      result = result.filter(t => (
-        (t.title && t.title.toLowerCase().includes(query)) ||
-        (t.description && t.description.toLowerCase().includes(query)) ||
-        (t.platform && t.platform.toLowerCase().includes(query)) ||
-        (t.assignee && t.assignee.toLowerCase().includes(query))
-      ));
+      result = result.filter(t => {
+        const pList = splitMultiValue(t.platforms || t.platform);
+        const aList = splitMultiValue(t.assignees || t.assignee);
+        return (
+          (t.title && t.title.toLowerCase().includes(query)) ||
+          (t.description && t.description.toLowerCase().includes(query)) ||
+          pList.some(p => p.toLowerCase().includes(query)) ||
+          aList.some(a => a.toLowerCase().includes(query))
+        );
+      });
     }
 
     if (sortBy === 'priority') {

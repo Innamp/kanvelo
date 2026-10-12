@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { PRIORITIES, DEFAULT_PLATFORMS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
-import { AutocompleteInput } from '../common/AutocompleteInput';
+import { MultiValueInput } from '../common/MultiValueInput';
+import { splitMultiValue, joinMultiValue } from '../../utils/taskHelpers';
 
 export function TaskEditModal({
   task,
@@ -12,7 +13,11 @@ export function TaskEditModal({
   assigneeSuggestions: propAssignees
 }) {
   const { canManipulateTasks, canDeleteTasks, isViewer, users } = useAuth();
-  const [formData, setFormData] = useState({ ...task });
+  const [formData, setFormData] = useState({
+    ...task,
+    platforms: splitMultiValue(task?.platforms || task?.platform),
+    assignees: splitMultiValue(task?.assignees || task?.assignee)
+  });
 
   // Suggestions for platform
   const platforms = useMemo(() => {
@@ -45,7 +50,13 @@ export function TaskEditModal({
   }, [users]);
 
   useEffect(() => {
-    setFormData({ ...task });
+    if (task) {
+      setFormData({
+        ...task,
+        platforms: splitMultiValue(task.platforms || task.platform),
+        assignees: splitMultiValue(task.assignees || task.assignee)
+      });
+    }
   }, [task]);
 
   const handleChange = (e) => {
@@ -57,15 +68,42 @@ export function TaskEditModal({
     }));
   };
 
+  const handlePlatformsChange = (newPlatforms) => {
+    if (!canManipulateTasks) return;
+    setFormData(prev => ({
+      ...prev,
+      platforms: newPlatforms,
+      platform: joinMultiValue(newPlatforms)
+    }));
+  };
+
+  const handleAssigneesChange = (newAssignees) => {
+    if (!canManipulateTasks) return;
+    setFormData(prev => ({
+      ...prev,
+      assignees: newAssignees,
+      assignee: joinMultiValue(newAssignees)
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!canManipulateTasks) return;
-    onSave(formData);
+
+    const payload = {
+      ...formData,
+      platforms: formData.platforms || splitMultiValue(formData.platform),
+      platform: joinMultiValue(formData.platforms || formData.platform),
+      assignees: formData.assignees || splitMultiValue(formData.assignee),
+      assignee: joinMultiValue(formData.assignees || formData.assignee)
+    };
+
+    onSave(payload);
   };
 
   return (
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
-      <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-dialog modal-dialog-spacious" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <h2 id="editModalTitle">{canManipulateTasks ? 'Edit Task Details' : 'Task Details'}</h2>
@@ -105,36 +143,42 @@ export function TaskEditModal({
               />
             </div>
 
-            <div className="form-grid-2col">
-              <div className="form-group-field">
-                <label htmlFor="taskPlatform">Platform</label>
-                <AutocompleteInput
-                  id="taskPlatform"
-                  name="platform"
-                  placeholder="e.g. AYO Toko, CITA"
-                  value={formData.platform || ''}
-                  onChange={handleChange}
-                  disabled={!canManipulateTasks}
-                  suggestions={platforms}
-                  quickPills={quickPlatforms}
-                  type="platform"
-                />
+            {/* Platform(s) Section */}
+            <div className="form-group-field">
+              <div className="field-label-row">
+                <label htmlFor="taskPlatform">Platform(s)</label>
+                <span className="field-hint-text">Add multiple platforms without crowding into one line</span>
               </div>
+              <MultiValueInput
+                id="taskPlatform"
+                name="platforms"
+                placeholder="Type platform & press Enter (or click + Add)..."
+                values={formData.platforms}
+                onChange={handlePlatformsChange}
+                disabled={!canManipulateTasks}
+                suggestions={platforms}
+                quickPills={quickPlatforms}
+                type="platform"
+              />
+            </div>
 
-              <div className="form-group-field">
-                <label htmlFor="taskAssignee">Assignee</label>
-                <AutocompleteInput
-                  id="taskAssignee"
-                  name="assignee"
-                  placeholder="e.g. John Doe"
-                  value={formData.assignee || ''}
-                  onChange={handleChange}
-                  disabled={!canManipulateTasks}
-                  suggestions={assignees}
-                  quickPills={quickAssignees}
-                  type="assignee"
-                />
+            {/* Assignee(s) Section */}
+            <div className="form-group-field">
+              <div className="field-label-row">
+                <label htmlFor="taskAssignee">Assignee(s)</label>
+                <span className="field-hint-text">Add multiple team members as separate lines</span>
               </div>
+              <MultiValueInput
+                id="taskAssignee"
+                name="assignees"
+                placeholder="Type assignee name & press Enter (or click + Add)..."
+                values={formData.assignees}
+                onChange={handleAssigneesChange}
+                disabled={!canManipulateTasks}
+                suggestions={assignees}
+                quickPills={quickAssignees}
+                type="assignee"
+              />
             </div>
 
             <div className="form-grid-2col">

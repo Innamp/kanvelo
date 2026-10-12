@@ -6,6 +6,9 @@ export default defineConfig({
   base: './', // Ensures assets load cleanly on GitHub Pages and any subfolder
   server: {
     port: 5173,
-    open: false
+    open: false,
+    watch: {
+      ignored: ['**/*.xlsx', '**/.git/**']
+    }
   }
 });

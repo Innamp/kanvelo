@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { STAGES, PRIORITIES } from '../../constants';
 import { PriorityBadge } from '../common/PriorityBadge';
 import { Avatar } from '../common/Avatar';
+import { splitMultiValue } from '../../utils/taskHelpers';
 
 export function OverviewView({ tasks, onTaskClick }) {
   const metrics = useMemo(() => {
@@ -34,18 +35,21 @@ export function OverviewView({ tasks, onTaskClick }) {
     const medPriority = tasks.filter(t => t.priority === PRIORITIES.MEDIUM).length;
     const lowPriority = tasks.filter(t => t.priority === PRIORITIES.LOW).length;
 
-    // Platform breakdown
+    // Platform breakdown (properly accounts for multi-value platforms)
     const platformMap = {};
     tasks.forEach(t => {
-      const p = t.platform || 'General';
-      if (!platformMap[p]) {
-        platformMap[p] = { name: p, total: 0, completed: 0, inProgress: 0, mandays: 0 };
-      }
-      platformMap[p].total += 1;
-      const md = parseFloat(t.mandays) || 0;
-      if (md > 0 && md <= 200) platformMap[p].mandays += md;
-      if (t.stage === STAGES.COMPLETED) platformMap[p].completed += 1;
-      if (t.stage === STAGES.IN_PROGRESS || t.stage === STAGES.REVIEW) platformMap[p].inProgress += 1;
+      const pList = splitMultiValue(t.platforms || t.platform);
+      const targetPlatforms = pList.length > 0 ? pList : ['General'];
+      targetPlatforms.forEach(p => {
+        if (!platformMap[p]) {
+          platformMap[p] = { name: p, total: 0, completed: 0, inProgress: 0, mandays: 0 };
+        }
+        platformMap[p].total += 1;
+        const md = parseFloat(t.mandays) || 0;
+        if (md > 0 && md <= 200) platformMap[p].mandays += (md / targetPlatforms.length);
+        if (t.stage === STAGES.COMPLETED) platformMap[p].completed += 1;
+        if (t.stage === STAGES.IN_PROGRESS || t.stage === STAGES.REVIEW) platformMap[p].inProgress += 1;
+      });
     });
 
     const platforms = Object.values(platformMap)
@@ -277,7 +281,14 @@ export function OverviewView({ tasks, onTaskClick }) {
                     <div className="urgent-task-info">
                       <div className="urgent-task-title">{task.title}</div>
                       <div className="urgent-task-meta">
-                        <span className="urgent-meta-tag">{task.platform || 'General'}</span>
+                        {(() => {
+                          const pList = splitMultiValue(task.platforms || task.platform);
+                          return (
+                            <span className="urgent-meta-tag">
+                              {pList.length > 0 ? pList.join(' • ') : 'General'}
+                            </span>
+                          );
+                        })()}
                         <span className="urgent-meta-dot">•</span>
                         <span>{task.mandays || 5} MD</span>
                         <span className="urgent-meta-dot">•</span>
@@ -286,7 +297,11 @@ export function OverviewView({ tasks, onTaskClick }) {
                     </div>
                   </div>
                   <div className="urgent-task-right">
-                    <Avatar name={task.assignee || 'Unassigned'} size={28} />
+                    <div className="urgent-assignees-stack">
+                      {splitMultiValue(task.assignees || task.assignee).slice(0, 3).map((a, i) => (
+                        <Avatar key={i} name={a} size={28} />
+                      ))}
+                    </div>
                     <button className="btn-urgent-open" aria-label="Open task">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <polyline points="9 18 15 12 9 6" />

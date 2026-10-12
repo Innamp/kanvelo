@@ -1,11 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { PRIORITIES, STAGES, DEFAULT_PLATFORMS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
-import { AutocompleteInput } from '../common/AutocompleteInput';
+import { MultiValueInput } from '../common/MultiValueInput';
+import { splitMultiValue, joinMultiValue } from '../../utils/taskHelpers';
 
 const INITIAL_TASK_STATE = {
   title: '',
+  platforms: ['AYO Toko'],
   platform: 'AYO Toko',
+  assignees: [],
   assignee: '',
   stage: STAGES.TODO,
   priority: PRIORITIES.MEDIUM,
@@ -60,16 +63,41 @@ export function TaskCreateModal({
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handlePlatformsChange = (newPlatforms) => {
+    setFormData(prev => ({
+      ...prev,
+      platforms: newPlatforms,
+      platform: joinMultiValue(newPlatforms)
+    }));
+  };
+
+  const handleAssigneesChange = (newAssignees) => {
+    setFormData(prev => ({
+      ...prev,
+      assignees: newAssignees,
+      assignee: joinMultiValue(newAssignees)
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.title.trim()) return;
-    onCreate(formData);
+
+    const payload = {
+      ...formData,
+      platforms: formData.platforms || splitMultiValue(formData.platform),
+      platform: joinMultiValue(formData.platforms || formData.platform),
+      assignees: formData.assignees || splitMultiValue(formData.assignee),
+      assignee: joinMultiValue(formData.assignees || formData.assignee)
+    };
+
+    onCreate(payload);
     setFormData(INITIAL_TASK_STATE);
   };
 
   return (
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="createModalTitle">
-      <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-dialog modal-dialog-spacious" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
           <h2 id="createModalTitle">Add New Task</h2>
           <button className="modal-close-icon" onClick={onClose} aria-label="Close modal">✕</button>
@@ -91,34 +119,40 @@ export function TaskCreateModal({
               />
             </div>
 
-            <div className="form-grid-2col">
-              <div className="form-group-field">
-                <label htmlFor="newPlatform">Platform</label>
-                <AutocompleteInput
-                  id="newPlatform"
-                  name="platform"
-                  placeholder="e.g. AYO Toko, CITA"
-                  value={formData.platform}
-                  onChange={handleChange}
-                  suggestions={platforms}
-                  quickPills={quickPlatforms}
-                  type="platform"
-                />
+            {/* Platform(s) Section */}
+            <div className="form-group-field">
+              <div className="field-label-row">
+                <label htmlFor="newPlatform">Platform(s)</label>
+                <span className="field-hint-text">Add multiple platforms without crowding into one line</span>
               </div>
+              <MultiValueInput
+                id="newPlatform"
+                name="platforms"
+                placeholder="Type platform & press Enter (or click + Add)..."
+                values={formData.platforms}
+                onChange={handlePlatformsChange}
+                suggestions={platforms}
+                quickPills={quickPlatforms}
+                type="platform"
+              />
+            </div>
 
-              <div className="form-group-field">
-                <label htmlFor="newAssignee">Assignee</label>
-                <AutocompleteInput
-                  id="newAssignee"
-                  name="assignee"
-                  placeholder="e.g. John Doe"
-                  value={formData.assignee}
-                  onChange={handleChange}
-                  suggestions={assignees}
-                  quickPills={quickAssignees}
-                  type="assignee"
-                />
+            {/* Assignee(s) Section */}
+            <div className="form-group-field">
+              <div className="field-label-row">
+                <label htmlFor="newAssignee">Assignee(s)</label>
+                <span className="field-hint-text">Add multiple team members as separate lines</span>
               </div>
+              <MultiValueInput
+                id="newAssignee"
+                name="assignees"
+                placeholder="Type assignee name & press Enter (or click + Add)..."
+                values={formData.assignees}
+                onChange={handleAssigneesChange}
+                suggestions={assignees}
+                quickPills={quickAssignees}
+                type="assignee"
+              />
             </div>
 
             <div className="form-grid-2col">
