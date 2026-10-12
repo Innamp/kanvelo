@@ -156,7 +156,7 @@ export const SPRINT_ALL_COLUMNS = [
     category: SPRINT_COLUMN_CATEGORIES.BUSINESS,
     defaultVisible: false,
     minWidth: 180,
-    type: 'text'
+    type: 'yesno'
   },
 
   // --- PRIORITIZATION & GOVERNANCE ---
@@ -208,7 +208,7 @@ export const SPRINT_ALL_COLUMNS = [
     category: SPRINT_COLUMN_CATEGORIES.DEV,
     defaultVisible: false,
     minWidth: 140,
-    type: 'text'
+    type: 'yesno'
   },
   {
     key: 'cross_sprint',
@@ -216,7 +216,7 @@ export const SPRINT_ALL_COLUMNS = [
     category: SPRINT_COLUMN_CATEGORIES.DEV,
     defaultVisible: false,
     minWidth: 120,
-    type: 'text'
+    type: 'yesno'
   },
   {
     key: 'cross_sprint_to',

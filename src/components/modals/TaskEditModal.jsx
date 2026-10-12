@@ -3,6 +3,7 @@ import { PRIORITIES, DEFAULT_PLATFORMS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import { MultiValueInput } from '../common/MultiValueInput';
 import { DatePicker } from '../common/DatePicker';
+import { YesNoSwitch } from '../common/YesNoSwitch';
 import { splitMultiValue, joinMultiValue } from '../../utils/taskHelpers';
 
 const TABS = [
@@ -429,12 +430,9 @@ export function TaskEditModal({
 
                   <div className="form-group-field">
                     <label htmlFor="taskChangesPrincipalRole">Changes in Principal Role / Require New Menu</label>
-                    <input
+                    <YesNoSwitch
                       id="taskChangesPrincipalRole"
                       name="changes_principal_role"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="Yes / No / Details..."
                       value={formData.changes_principal_role || ''}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}
@@ -571,12 +569,9 @@ export function TaskEditModal({
                 <div className="form-grid-3col">
                   <div className="form-group-field">
                     <label htmlFor="taskDevelopInSprint">Develop in Sprint?</label>
-                    <input
+                    <YesNoSwitch
                       id="taskDevelopInSprint"
                       name="develop_in_sprint"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="Yes / No"
                       value={formData.develop_in_sprint || ''}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}
@@ -585,12 +580,9 @@ export function TaskEditModal({
 
                   <div className="form-group-field">
                     <label htmlFor="taskCrossSprint">Cross Sprint?</label>
-                    <input
+                    <YesNoSwitch
                       id="taskCrossSprint"
                       name="cross_sprint"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="Yes / No"
                       value={formData.cross_sprint || ''}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}

@@ -3,6 +3,7 @@ import { PRIORITIES, STAGES, DEFAULT_PLATFORMS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import { MultiValueInput } from '../common/MultiValueInput';
 import { DatePicker } from '../common/DatePicker';
+import { YesNoSwitch } from '../common/YesNoSwitch';
 import { splitMultiValue, joinMultiValue } from '../../utils/taskHelpers';
 
 const TABS = [
@@ -420,12 +421,9 @@ export function TaskCreateModal({
 
                   <div className="form-group-field">
                     <label htmlFor="createChangesRole">Changes in Principal Role / Require New Menu</label>
-                    <input
+                    <YesNoSwitch
                       id="createChangesRole"
                       name="changes_principal_role"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="Yes / No"
                       value={formData.changes_principal_role}
                       onChange={handleChange}
                     />
@@ -553,11 +551,9 @@ export function TaskCreateModal({
                 <div className="form-grid-3col">
                   <div className="form-group-field">
                     <label htmlFor="createDevelopInSprint">Develop in Sprint?</label>
-                    <input
+                    <YesNoSwitch
                       id="createDevelopInSprint"
                       name="develop_in_sprint"
-                      type="text"
-                      className="form-input-field"
                       value={formData.develop_in_sprint}
                       onChange={handleChange}
                     />
@@ -565,11 +561,9 @@ export function TaskCreateModal({
 
                   <div className="form-group-field">
                     <label htmlFor="createCrossSprint">Cross Sprint?</label>
-                    <input
+                    <YesNoSwitch
                       id="createCrossSprint"
                       name="cross_sprint"
-                      type="text"
-                      className="form-input-field"
                       value={formData.cross_sprint}
                       onChange={handleChange}
                     />

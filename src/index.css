@@ -4717,4 +4717,159 @@ body {
   opacity: 1;
 }
 
+/* ==========================================================================
+   YES/NO SWITCH / RADIO PILL STYLES
+   ========================================================================== */
+.yes-no-switch-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.yes-no-switch-wrapper.disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.yes-no-pill-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 4px 6px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.yes-no-pill-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.yes-no-pill-btn:hover:not(.active) {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.yes-no-pill-btn.btn-yes.active {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #10b981;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15);
+}
+
+.yes-no-pill-btn.btn-no.active {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #ef4444;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.15);
+}
+
+.yes-no-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: all 0.2s ease;
+}
+
+.yes-no-dot.dot-active-yes {
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.yes-no-dot.dot-active-no {
+  background: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.yes-no-custom-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0284c7;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  padding: 2px 8px;
+  border-radius: 6px;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.yes-no-clear-icon {
+  background: #e2e8f0;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+.yes-no-clear-icon:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* Table Yes/No Pill Badges */
+.table-yesno-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.table-yesno-pill.pill-yes {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.table-yesno-pill.pill-no {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.table-yesno-pill.pill-custom {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
 

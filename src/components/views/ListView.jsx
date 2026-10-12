@@ -152,6 +152,10 @@ export function ListView({ tasks, onTaskClick }) {
           if (searchLower === '1-49' && (prog < 1 || prog > 49)) return false;
           if (searchLower === '50-99' && (prog < 50 || prog > 99)) return false;
           if (searchLower === '100' && prog !== 100) return false;
+        } else if (key === 'develop_in_sprint' || key === 'cross_sprint' || key === 'changes_principal_role') {
+          const taskVal = String(task[key] || '').toLowerCase().trim();
+          if (searchLower === 'yes' && taskVal !== 'yes' && taskVal !== 'true') return false;
+          if (searchLower === 'no' && taskVal !== 'no' && taskVal !== 'false') return false;
         } else {
           const taskVal = String(task[key] || '').toLowerCase();
           if (!taskVal.includes(searchLower)) return false;
@@ -294,6 +298,18 @@ export function ListView({ tasks, onTaskClick }) {
           <span className="table-empty-dash">-</span>
         );
 
+      case 'yesno': {
+        if (!rawVal) return <span className="table-empty-dash">-</span>;
+        const lower = String(rawVal).trim().toLowerCase();
+        if (lower === 'yes' || lower === 'true') {
+          return <span className="table-yesno-pill pill-yes">Yes</span>;
+        }
+        if (lower === 'no' || lower === 'false') {
+          return <span className="table-yesno-pill pill-no">No</span>;
+        }
+        return <span className="table-yesno-pill pill-custom">{rawVal}</span>;
+      }
+
       default:
         return rawVal !== null && rawVal !== undefined && String(rawVal).trim() !== '' ? (
           <span className="table-text-truncated" title={String(rawVal)}>
@@ -432,6 +448,21 @@ export function ListView({ tasks, onTaskClick }) {
           onChange={(e) => handleFilterChange(col.key, e.target.value)}
           aria-label={`Filter by ${col.label}`}
         />
+      );
+    }
+
+    if (col.type === 'yesno') {
+      return (
+        <select
+          className="col-filter-select"
+          value={currentVal}
+          onChange={(e) => handleFilterChange(col.key, e.target.value)}
+          aria-label={`Filter by ${col.label}`}
+        >
+          <option value="">All</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
       );
     }
 
