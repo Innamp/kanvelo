@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ROLES, ROLE_LABELS, DEMO_AVATARS } from '../../constants';
+import { ROLES, ROLE_LABELS } from '../../constants';
+import { Avatar } from '../common/Avatar';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 
@@ -111,7 +112,7 @@ export function UserControlModal({ isOpen, onClose }) {
                 return (
                   <div key={u.id} className="user-row-card">
                     <div className="user-row-left">
-                      <img src={u.avatar} alt={u.name} className="user-row-avatar" />
+                      <Avatar name={u.name} size={36} className="user-row-avatar" />
                       <div className="user-row-details">
                         <div className="user-row-name-row">
                           <strong className="user-row-name">{u.name}</strong>
@@ -203,17 +204,13 @@ export function UserControlModal({ isOpen, onClose }) {
             </div>
 
             <div className="form-group-field">
-              <label>Select Avatar Profile</label>
-              <div className="avatar-picker-row">
-                {DEMO_AVATARS.map((av, idx) => (
-                  <img
-                    key={idx}
-                    src={av}
-                    alt="avatar option"
-                    className={`avatar-choice ${newAvatar === av ? 'selected' : ''}`}
-                    onClick={() => setNewAvatar(av)}
-                  />
-                ))}
+              <label>Profile Avatar</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <Avatar name={newName || 'User'} size={40} />
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <strong style={{ fontSize: '13px', color: '#1e293b' }}>{newName || 'User Initials'}</strong>
+                  <span style={{ fontSize: '11px', color: '#64748b' }}>Generated automatically from user name</span>
+                </div>
               </div>
             </div>
 

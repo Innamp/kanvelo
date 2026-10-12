@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { ROLE_LABELS } from '../../constants';
 import { splitMultiValue } from '../../utils/taskHelpers';
+import { Avatar } from './Avatar';
 
 export function MultiValueInput({
   id,
@@ -188,13 +189,7 @@ export function MultiValueInput({
                     </span>
                   ) : (
                     <span className="chip-avatar">
-                      {metaObj?.avatar ? (
-                        <img src={metaObj.avatar} alt={val} className="chip-avatar-img" />
-                      ) : (
-                        <span className="chip-avatar-initials">
-                          {val ? val.substring(0, 2).toUpperCase() : 'U'}
-                        </span>
-                      )}
+                      <Avatar name={val} size={18} />
                     </span>
                   )}
                   
@@ -291,13 +286,7 @@ export function MultiValueInput({
                 >
                   {type === 'assignee' ? (
                     <>
-                      {item.avatar ? (
-                        <img src={item.avatar} alt={item.name} className="autocomplete-user-avatar" />
-                      ) : (
-                        <div className="autocomplete-user-initials">
-                          {item.name ? item.name.substring(0, 2).toUpperCase() : 'U'}
-                        </div>
-                      )}
+                      <Avatar name={item.name} size={24} />
                       <div className="autocomplete-item-details">
                         <span className="autocomplete-item-name">{item.name}</span>
                         {item.role && (

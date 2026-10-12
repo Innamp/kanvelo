@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { ROLES, ROLE_LABELS, DEMO_AVATARS } from '../../constants';
+import { ROLES, ROLE_LABELS } from '../../constants';
+import { Avatar } from '../common/Avatar';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 
@@ -293,7 +294,7 @@ export function UserControlView() {
                     {/* User Profile */}
                     <td>
                       <div className="uc-user-cell">
-                        <img src={user.avatar} alt={user.name} className="uc-table-avatar" />
+                        <Avatar name={user.name} size={42} className="uc-table-avatar" />
                         <div className="uc-user-cell-meta">
                           <div className="uc-user-name-row">
                             <span className="uc-user-name">{user.name}</span>
@@ -488,18 +489,13 @@ export function UserControlView() {
                 </div>
 
                 <div className="form-group-field">
-                  <label>Select Profile Avatar</label>
-                  <div className="avatar-options-grid">
-                    {DEMO_AVATARS.map((av, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        className={`avatar-choice-btn ${newAvatar === av ? 'selected' : ''}`}
-                        onClick={() => setNewAvatar(av)}
-                      >
-                        <img src={av} alt={`Avatar option ${idx + 1}`} />
-                      </button>
-                    ))}
+                  <label>Profile Avatar Preview</label>
+                  <div className="avatar-initial-preview-card" style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '12px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                    <Avatar name={newName || 'User'} size={44} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <strong style={{ fontSize: '13px', color: '#1e293b' }}>{newName || 'User Initials'}</strong>
+                      <span style={{ fontSize: '11.5px', color: '#64748b' }}>Avatar initials and vibrant background are automatically generated</span>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { SearchIcon, BellIcon } from '../common/Icons';
+import { Avatar } from '../common/Avatar';
 import { useAuth } from '../../context/AuthContext';
 import { ROLE_LABELS } from '../../constants';
 
@@ -49,10 +50,10 @@ export function Header({ search, onSearchChange, onOpenUserControl }) {
             aria-label="User Profile and Role Menu"
             onClick={() => setMenuOpen(prev => !prev)}
           >
-            <img
-              src={currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop&crop=faces'}
-              alt={currentUser?.name || 'User'}
-              className="user-avatar-img"
+            <Avatar
+              name={currentUser?.name || 'User'}
+              size={30}
+              className="user-avatar-initials"
             />
             <div className="user-profile-text-wrap">
               <span className="user-profile-name">{currentUser?.name || 'John Doe'}</span>
@@ -76,10 +77,10 @@ export function Header({ search, onSearchChange, onOpenUserControl }) {
           {menuOpen && (
             <div className="user-dropdown-popover">
               <div className="dropdown-user-summary">
-                <img
-                  src={currentUser?.avatar}
-                  alt={currentUser?.name}
-                  className="dropdown-avatar-lg"
+                <Avatar
+                  name={currentUser?.name || 'User'}
+                  size={44}
+                  className="dropdown-avatar-initials"
                 />
                 <div className="dropdown-user-details">
                   <strong>{currentUser?.name}</strong>
@@ -126,7 +127,7 @@ export function Header({ search, onSearchChange, onOpenUserControl }) {
                         setMenuOpen(false);
                       }}
                     >
-                      <img src={u.avatar} alt={u.name} className="switch-avatar" />
+                      <Avatar name={u.name} size={28} className="switch-avatar" />
                       <div className="switch-info">
                         <strong>{u.name}</strong>
                         <span className={`role-dot role-${u.role}`}>

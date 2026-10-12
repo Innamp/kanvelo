@@ -1,5 +1,6 @@
 import React from 'react';
 import { SettingsIcon } from '../common/Icons';
+import { Avatar } from '../common/Avatar';
 import { useToast } from '../../context/ToastContext';
 
 export function ProjectBanner() {
@@ -25,10 +26,10 @@ export function ProjectBanner() {
 
       <div className="project-actions-group">
         <div className="avatar-group-stack">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&h=60&fit=crop" className="avatar-stack-face" alt="User" />
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop" className="avatar-stack-face" alt="User" />
-          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=60&h=60&fit=crop" className="avatar-stack-face" alt="User" />
-          <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=60&h=60&fit=crop" className="avatar-stack-face" alt="User" />
+          <Avatar name="Sarah Jenkins" size={30} className="avatar-stack-face" />
+          <Avatar name="Alex Rivera" size={30} className="avatar-stack-face" />
+          <Avatar name="Junaidi" size={30} className="avatar-stack-face" />
+          <Avatar name="Felicia" size={30} className="avatar-stack-face" />
           <div className="avatar-stack-count">+5</div>
         </div>
 

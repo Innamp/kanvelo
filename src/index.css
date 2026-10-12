@@ -286,11 +286,12 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
-.user-avatar-img {
+.user-avatar-img,
+.user-avatar-initials {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .user-profile-name {
@@ -1909,13 +1910,14 @@ body {
   border-bottom: 1px solid #f1f5f9;
 }
 
-.dropdown-avatar-lg {
+.dropdown-avatar-lg,
+.dropdown-avatar-initials {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  object-fit: cover;
   border: 2px solid #ffffff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 .dropdown-user-details {

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { ROLE_LABELS } from '../../constants';
+import { Avatar } from './Avatar';
 
 export function AutocompleteInput({
   id,
@@ -169,13 +170,7 @@ export function AutocompleteInput({
                 >
                   {type === 'assignee' ? (
                     <>
-                      {item.avatar ? (
-                        <img src={item.avatar} alt={item.name} className="autocomplete-user-avatar" />
-                      ) : (
-                        <div className="autocomplete-user-initials">
-                          {item.name ? item.name.substring(0, 2).toUpperCase() : 'U'}
-                        </div>
-                      )}
+                      <Avatar name={item.name} size={24} />
                       <div className="autocomplete-item-details">
                         <span className="autocomplete-item-name">{item.name}</span>
                         {item.role && (

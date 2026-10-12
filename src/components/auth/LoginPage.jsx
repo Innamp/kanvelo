@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES, ROLE_LABELS } from '../../constants';
+import { Avatar } from '../common/Avatar';
 
 export function LoginPage() {
   const { users, login, loginAsUser } = useAuth();
@@ -107,7 +108,7 @@ export function LoginPage() {
                     onClick={() => handleQuickLogin(u)}
                     title={`Log in as ${u.name} (${ROLE_LABELS[roleKey]})`}
                   >
-                    <img src={u.avatar} alt={u.name} className="quick-user-avatar" />
+                    <Avatar name={u.name} size={36} className="quick-user-avatar" />
                     <div className="quick-user-info">
                       <div className="quick-user-top">
                         <strong className="quick-user-name">{u.name}</strong>
