@@ -172,30 +172,73 @@ switch ($action) {
 
     case 'save_task':
         $id = $body['id'] ?? null;
-        $sprintId = $body['sprint_id'] ?? 'sprint-10';
-        $title = $body['title'] ?? 'Untitled';
+        $sprintId = $body['sprint_id'] ?? 'sprint-8';
+        $title = $body['title'] ?? ($body['epic'] ?? 'Untitled');
         $platform = $body['platform'] ?? 'General';
-        $assignee = $body['assignee'] ?? 'Unassigned';
+        $assignee = $body['assignee'] ?? ($body['pm_name'] ?? 'Unassigned');
         $stage = $body['stage'] ?? 'todo';
         $priority = $body['priority'] ?? 'Medium';
         $progress = intval($body['progress'] ?? 0);
-        $mandays = strval($body['mandays'] ?? '5');
+        $mandays = strval($body['mandays'] ?? ($body['weight_mandays'] ?? '0'));
         $description = $body['description'] ?? '';
         $background = $body['background'] ?? '';
-        $jira = $body['jira'] ?? '';
+        $objective = $body['objective'] ?? '';
+        $jira = $body['jira'] ?? ($body['jira_ticket_number'] ?? '');
         $dependency = $body['dependency'] ?? '';
+
+        $no = $body['no'] ?? null;
+        $ticket_code = $body['ticket_code'] ?? '';
+        $sub_platform = $body['sub_platform'] ?? '';
+        $epic = $body['epic'] ?? $title;
+        $impact = $body['impact'] ?? '';
+        $business_owner_pic = $body['business_owner_pic'] ?? '';
+        $category = $body['category'] ?? '';
+        $changes_principal_role = $body['changes_principal_role'] ?? '';
+        $brd_submission_date = $body['brd_submission_date'] ?? '';
+        $pm_name = $body['pm_name'] ?? $assignee;
+        $weight_mandays = $body['weight_mandays'] ?? $mandays;
+        $proposal_prio_rank = $body['proposal_prio_rank'] ?? '';
+        $final_prio_rank = $body['final_prio_rank'] ?? '';
+        $prd_creation_date = $body['prd_creation_date'] ?? '';
+        $jira_ticket_number = $body['jira_ticket_number'] ?? $jira;
+        $total_tickets_generated = $body['total_tickets_generated'] ?? '';
+        $uat_date = $body['uat_date'] ?? '';
+        $date_sharing_req_se = $body['date_sharing_req_se'] ?? '';
+        $final_dev_status = $body['final_dev_status'] ?? '';
+        $develop_in_sprint = $body['develop_in_sprint'] ?? '';
+        $cross_sprint = $body['cross_sprint'] ?? '';
+        $cross_sprint_to = $body['cross_sprint_to'] ?? '';
+        $mandays_consumption_se = $body['mandays_consumption_se'] ?? '';
+        $mandays_consumption_itpd = $body['mandays_consumption_itpd'] ?? '';
+        $reason_cancel_deprio = $body['reason_cancel_deprio'] ?? '';
+        $deployment_date = $body['deployment_date'] ?? '';
+        $brd = $body['brd'] ?? '';
+        $ticket_1st_shown = $body['ticket_1st_shown'] ?? '';
+        $start_dev_in_sprint = $body['start_dev_in_sprint'] ?? '';
+        $final_remarks = $body['final_remarks'] ?? '';
+        $remark = $body['remark'] ?? '';
+        $shared_product_team = $body['shared_product_team'] ?? '';
+        $prev_prio = $body['prev_prio'] ?? '';
 
         if (!$id) {
             $id = $sprintId . '-t' . time() . rand(100, 999);
         }
 
         $stmt = $pdo->prepare("
-            INSERT INTO tasks (id, sprint_id, title, description, background, platform, assignee, priority, stage, progress, mandays, jira, dependency)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tasks (
+                id, sprint_id, title, description, background, objective, platform, assignee, priority, stage, progress, mandays, jira, dependency,
+                no, ticket_code, sub_platform, epic, impact, business_owner_pic, category, changes_principal_role, brd_submission_date,
+                pm_name, weight_mandays, proposal_prio_rank, final_prio_rank, prd_creation_date, jira_ticket_number, total_tickets_generated,
+                uat_date, date_sharing_req_se, final_dev_status, develop_in_sprint, cross_sprint, cross_sprint_to, mandays_consumption_se,
+                mandays_consumption_itpd, reason_cancel_deprio, deployment_date, brd, ticket_1st_shown, start_dev_in_sprint, final_remarks,
+                remark, shared_product_team, prev_prio
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 title = excluded.title,
                 description = excluded.description,
                 background = excluded.background,
+                objective = excluded.objective,
                 platform = excluded.platform,
                 assignee = excluded.assignee,
                 priority = excluded.priority,
@@ -203,12 +246,50 @@ switch ($action) {
                 progress = excluded.progress,
                 mandays = excluded.mandays,
                 jira = excluded.jira,
-                dependency = excluded.dependency
+                dependency = excluded.dependency,
+                no = excluded.no,
+                ticket_code = excluded.ticket_code,
+                sub_platform = excluded.sub_platform,
+                epic = excluded.epic,
+                impact = excluded.impact,
+                business_owner_pic = excluded.business_owner_pic,
+                category = excluded.category,
+                changes_principal_role = excluded.changes_principal_role,
+                brd_submission_date = excluded.brd_submission_date,
+                pm_name = excluded.pm_name,
+                weight_mandays = excluded.weight_mandays,
+                proposal_prio_rank = excluded.proposal_prio_rank,
+                final_prio_rank = excluded.final_prio_rank,
+                prd_creation_date = excluded.prd_creation_date,
+                jira_ticket_number = excluded.jira_ticket_number,
+                total_tickets_generated = excluded.total_tickets_generated,
+                uat_date = excluded.uat_date,
+                date_sharing_req_se = excluded.date_sharing_req_se,
+                final_dev_status = excluded.final_dev_status,
+                develop_in_sprint = excluded.develop_in_sprint,
+                cross_sprint = excluded.cross_sprint,
+                cross_sprint_to = excluded.cross_sprint_to,
+                mandays_consumption_se = excluded.mandays_consumption_se,
+                mandays_consumption_itpd = excluded.mandays_consumption_itpd,
+                reason_cancel_deprio = excluded.reason_cancel_deprio,
+                deployment_date = excluded.deployment_date,
+                brd = excluded.brd,
+                ticket_1st_shown = excluded.ticket_1st_shown,
+                start_dev_in_sprint = excluded.start_dev_in_sprint,
+                final_remarks = excluded.final_remarks,
+                remark = excluded.remark,
+                shared_product_team = excluded.shared_product_team,
+                prev_prio = excluded.prev_prio
         ");
         $stmt->execute([
-            $id, $sprintId, $title, $description, $background,
+            $id, $sprintId, $title, $description, $background, $objective,
             $platform, $assignee, $priority, $stage, $progress,
-            $mandays, $jira, $dependency
+            $mandays, $jira, $dependency,
+            $no, $ticket_code, $sub_platform, $epic, $impact, $business_owner_pic, $category, $changes_principal_role, $brd_submission_date,
+            $pm_name, $weight_mandays, $proposal_prio_rank, $final_prio_rank, $prd_creation_date, $jira_ticket_number, $total_tickets_generated,
+            $uat_date, $date_sharing_req_se, $final_dev_status, $develop_in_sprint, $cross_sprint, $cross_sprint_to, $mandays_consumption_se,
+            $mandays_consumption_itpd, $reason_cancel_deprio, $deployment_date, $brd, $ticket_1st_shown, $start_dev_in_sprint, $final_remarks,
+            $remark, $shared_product_team, $prev_prio
         ]);
 
         echo json_encode(['status' => 'success', 'id' => $id]);

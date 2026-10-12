@@ -1,254 +1,629 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { PriorityBadge } from '../common/PriorityBadge';
 import { Avatar } from '../common/Avatar';
 import { PRIORITIES, STAGES } from '../../constants';
 import { splitMultiValue } from '../../utils/taskHelpers';
+import {
+  SPRINT_ALL_COLUMNS,
+  SPRINT_COLUMN_CATEGORIES,
+  COLUMN_PRESETS
+} from '../../constants/sprintColumns';
 
 export function ListView({ tasks, onTaskClick }) {
-  const [filters, setFilters] = useState({
-    title: '',
-    platform: '',
-    assignee: '',
-    priority: '',
-    mandays: '',
-    stage: '',
-    progress: ''
+  // Store visible column keys
+  const [visibleColKeys, setVisibleColKeys] = useState(() => {
+    try {
+      const saved = localStorage.getItem('kanvelo_list_visible_columns');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      // ignore
+    }
+    return COLUMN_PRESETS.DEFAULT.keys;
   });
 
-  // Extract unique platforms and assignees for dropdowns
-  const { uniquePlatforms, uniqueAssignees } = useMemo(() => {
+  // State for Column Customizer modal/popover
+  const [showColumnPicker, setShowColumnPicker] = useState(false);
+  const [columnSearch, setColumnSearch] = useState('');
+  const pickerRef = useRef(null);
+
+  // Filter state for each column
+  const [filters, setFilters] = useState({});
+
+  // Close column picker on click outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+        setShowColumnPicker(false);
+      }
+    }
+    if (showColumnPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showColumnPicker]);
+
+  // Persist column selections
+  const handleToggleColumn = (colKey) => {
+    setVisibleColKeys(prev => {
+      let updated;
+      if (prev.includes(colKey)) {
+        // Prevent hiding the last column
+        if (prev.length <= 1) return prev;
+        updated = prev.filter(k => k !== colKey);
+      } else {
+        updated = [...prev, colKey];
+      }
+      try {
+        localStorage.setItem('kanvelo_list_visible_columns', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleApplyPreset = (preset) => {
+    setVisibleColKeys(preset.keys);
+    try {
+      localStorage.setItem('kanvelo_list_visible_columns', JSON.stringify(preset.keys));
+    } catch (e) {}
+  };
+
+  const handleSelectAllColumns = () => {
+    const allKeys = SPRINT_ALL_COLUMNS.map(c => c.key);
+    setVisibleColKeys(allKeys);
+    try {
+      localStorage.setItem('kanvelo_list_visible_columns', JSON.stringify(allKeys));
+    } catch (e) {}
+  };
+
+  const handleResetDefaultColumns = () => {
+    handleApplyPreset(COLUMN_PRESETS.DEFAULT);
+  };
+
+  // Visible column definitions in original order
+  const activeColumns = useMemo(() => {
+    return SPRINT_ALL_COLUMNS.filter(col => visibleColKeys.includes(col.key));
+  }, [visibleColKeys]);
+
+  // Unique values for specific dropdown filters
+  const { uniquePlatforms, uniqueAssignees, uniqueDevStatuses, uniqueCategories } = useMemo(() => {
     const platforms = new Set();
     const assignees = new Set();
+    const devStatuses = new Set();
+    const categories = new Set();
 
     tasks.forEach(t => {
-      splitMultiValue(t.platforms || t.platform).forEach(p => platforms.add(p));
-      splitMultiValue(t.assignees || t.assignee).forEach(a => assignees.add(a));
+      splitMultiValue(t.platforms || t.platform).forEach(p => p && platforms.add(p));
+      splitMultiValue(t.assignees || t.assignee).forEach(a => a && assignees.add(a));
+      if (t.final_dev_status) devStatuses.add(t.final_dev_status);
+      if (t.category) categories.add(t.category);
     });
 
     return {
       uniquePlatforms: Array.from(platforms).sort(),
-      uniqueAssignees: Array.from(assignees).sort()
+      uniqueAssignees: Array.from(assignees).sort(),
+      uniqueDevStatuses: Array.from(devStatuses).sort(),
+      uniqueCategories: Array.from(categories).sort()
     };
   }, [tasks]);
 
-  const handleFilterChange = (field, value) => {
-    setFilters(prev => ({ ...prev, [field]: value }));
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
   };
 
   const handleResetFilters = () => {
-    setFilters({
-      title: '',
-      platform: '',
-      assignee: '',
-      priority: '',
-      mandays: '',
-      stage: '',
-      progress: ''
-    });
+    setFilters({});
   };
 
-  const isFiltered = Object.values(filters).some(Boolean);
+  const isFiltered = useMemo(() => {
+    return Object.values(filters).some(val => val !== undefined && val !== '');
+  }, [filters]);
 
-  // Apply column filters
+  // Apply filters across all columns
   const filteredTasks = useMemo(() => {
     return tasks.filter(task => {
-      // 1. Title Filter
-      if (filters.title) {
-        const titleMatch = (task.title || '').toLowerCase().includes(filters.title.toLowerCase().trim());
-        if (!titleMatch) return false;
-      }
+      for (const [key, filterVal] of Object.entries(filters)) {
+        if (!filterVal || filterVal.trim() === '') continue;
+        const searchLower = filterVal.toLowerCase().trim();
 
-      // 2. Platform Filter
-      if (filters.platform) {
-        const pList = splitMultiValue(task.platforms || task.platform);
-        const match = pList.some(p => p.toLowerCase() === filters.platform.toLowerCase());
-        if (!match) return false;
+        if (key === 'title') {
+          const title = (task.title || task.epic || '').toLowerCase();
+          if (!title.includes(searchLower)) return false;
+        } else if (key === 'platform') {
+          const pList = splitMultiValue(task.platforms || task.platform);
+          if (!pList.some(p => p.toLowerCase().includes(searchLower))) return false;
+        } else if (key === 'assignee') {
+          const aList = splitMultiValue(task.assignees || task.assignee);
+          if (!aList.some(a => a.toLowerCase().includes(searchLower))) return false;
+        } else if (key === 'priority') {
+          if ((task.priority || 'Medium').toLowerCase() !== searchLower) return false;
+        } else if (key === 'stage') {
+          if ((task.stage || 'todo').toLowerCase() !== searchLower) return false;
+        } else if (key === 'progress') {
+          const prog = Number(task.progress) || 0;
+          if (searchLower === '0' && prog !== 0) return false;
+          if (searchLower === '1-49' && (prog < 1 || prog > 49)) return false;
+          if (searchLower === '50-99' && (prog < 50 || prog > 99)) return false;
+          if (searchLower === '100' && prog !== 100) return false;
+        } else {
+          const taskVal = String(task[key] || '').toLowerCase();
+          if (!taskVal.includes(searchLower)) return false;
+        }
       }
-
-      // 3. Assignee Filter
-      if (filters.assignee) {
-        const aList = splitMultiValue(task.assignees || task.assignee);
-        const match = aList.some(a => a.toLowerCase().includes(filters.assignee.toLowerCase()));
-        if (!match) return false;
-      }
-
-      // 4. Priority Filter
-      if (filters.priority) {
-        if ((task.priority || 'Medium') !== filters.priority) return false;
-      }
-
-      // 5. Mandays Filter
-      if (filters.mandays) {
-        const mdStr = String(task.mandays || '');
-        if (!mdStr.includes(filters.mandays.trim())) return false;
-      }
-
-      // 6. Stage Filter
-      if (filters.stage) {
-        if ((task.stage || 'todo') !== filters.stage) return false;
-      }
-
-      // 7. Progress Filter
-      if (filters.progress) {
-        const prog = Number(task.progress) || 0;
-        if (filters.progress === '0' && prog !== 0) return false;
-        if (filters.progress === '1-49' && (prog < 1 || prog > 49)) return false;
-        if (filters.progress === '50-99' && (prog < 50 || prog > 99)) return false;
-        if (filters.progress === '100' && prog !== 100) return false;
-      }
-
       return true;
     });
   }, [tasks, filters]);
 
+  // Grouped columns for the Column Picker
+  const columnsByCategory = useMemo(() => {
+    const map = {};
+    Object.values(SPRINT_COLUMN_CATEGORIES).forEach(cat => {
+      map[cat] = [];
+    });
+
+    SPRINT_ALL_COLUMNS.forEach(col => {
+      if (
+        columnSearch.trim() === '' ||
+        col.label.toLowerCase().includes(columnSearch.toLowerCase()) ||
+        col.key.toLowerCase().includes(columnSearch.toLowerCase())
+      ) {
+        if (!map[col.category]) map[col.category] = [];
+        map[col.category].push(col);
+      }
+    });
+
+    return map;
+  }, [columnSearch]);
+
+  // Render cell content based on column definition
+  const renderCellContent = (task, col) => {
+    const rawVal = task[col.key];
+
+    switch (col.type) {
+      case 'title':
+        return (
+          <div className="table-task-title-cell" title={task.title || task.epic}>
+            <strong>{task.title || task.epic || 'Untitled'}</strong>
+          </div>
+        );
+
+      case 'code':
+        return rawVal ? (
+          <span className="table-code-badge" title={rawVal}>
+            {rawVal}
+          </span>
+        ) : (
+          <span className="table-empty-dash">-</span>
+        );
+
+      case 'platform': {
+        const pList = splitMultiValue(task.platforms || task.platform);
+        if (pList.length === 0) {
+          return <span className="platform-tag-pill">General</span>;
+        }
+        return (
+          <div className="cell-platform-stack">
+            {pList.map((p, idx) => (
+              <span key={idx} className="platform-tag-pill" title={`Platform: ${p}`}>
+                {p}
+              </span>
+            ))}
+          </div>
+        );
+      }
+
+      case 'assignee': {
+        const aList = splitMultiValue(task.assignees || task.assignee);
+        if (aList.length === 0) {
+          return <span className="assignee-empty-text">Unassigned</span>;
+        }
+        return (
+          <div className="cell-assignee-stack">
+            {aList.map((a, idx) => (
+              <div key={idx} className="assignee-row-chip" title={`Assignee: ${a}`}>
+                <Avatar name={a} size={20} />
+                <span className="assignee-name-text">{a}</span>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      case 'priority':
+        return <PriorityBadge priority={task.priority} />;
+
+      case 'stage':
+        return (
+          <span className={`stage-text-tag ${(task.stage || 'todo')}`}>
+            {(task.stage || 'todo').replace('-', ' ')}
+          </span>
+        );
+
+      case 'progress':
+        return (
+          <div className="table-progress-box">
+            <span>{task.progress || 0}%</span>
+            <div className="table-mini-bar-track">
+              <div
+                className="table-mini-bar-fill"
+                style={{ width: `${task.progress || 0}%` }}
+              />
+            </div>
+          </div>
+        );
+
+      case 'badge':
+        return rawVal ? (
+          <span className="table-status-pill" title={rawVal}>
+            {rawVal}
+          </span>
+        ) : (
+          <span className="table-empty-dash">-</span>
+        );
+
+      case 'link':
+        return rawVal ? (
+          rawVal.startsWith('http') ? (
+            <a
+              href={rawVal}
+              target="_blank"
+              rel="noreferrer"
+              className="table-link-btn"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Open Link ↗
+            </a>
+          ) : (
+            <span className="table-text-truncated" title={rawVal}>{rawVal}</span>
+          )
+        ) : (
+          <span className="table-empty-dash">-</span>
+        );
+
+      case 'date':
+        return rawVal ? (
+          <span className="table-date-text">{rawVal}</span>
+        ) : (
+          <span className="table-empty-dash">-</span>
+        );
+
+      default:
+        return rawVal !== null && rawVal !== undefined && String(rawVal).trim() !== '' ? (
+          <span className="table-text-truncated" title={String(rawVal)}>
+            {String(rawVal)}
+          </span>
+        ) : (
+          <span className="table-empty-dash">-</span>
+        );
+    }
+  };
+
+  // Render header filter cell
+  const renderFilterInput = (col) => {
+    const currentVal = filters[col.key] || '';
+
+    if (col.key === 'platform') {
+      return (
+        <select
+          className="col-filter-select"
+          value={currentVal}
+          onChange={(e) => handleFilterChange('platform', e.target.value)}
+          aria-label="Filter by platform"
+        >
+          <option value="">All</option>
+          {uniquePlatforms.map(p => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
+      );
+    }
+
+    if (col.key === 'assignee') {
+      return (
+        <select
+          className="col-filter-select"
+          value={currentVal}
+          onChange={(e) => handleFilterChange('assignee', e.target.value)}
+          aria-label="Filter by assignee"
+        >
+          <option value="">All</option>
+          {uniqueAssignees.map(a => (
+            <option key={a} value={a}>{a}</option>
+          ))}
+        </select>
+      );
+    }
+
+    if (col.key === 'priority') {
+      return (
+        <select
+          className="col-filter-select"
+          value={currentVal}
+          onChange={(e) => handleFilterChange('priority', e.target.value)}
+          aria-label="Filter by priority"
+        >
+          <option value="">All</option>
+          <option value={PRIORITIES.HIGH}>High</option>
+          <option value={PRIORITIES.MEDIUM}>Medium</option>
+          <option value={PRIORITIES.LOW}>Low</option>
+        </select>
+      );
+    }
+
+    if (col.key === 'stage') {
+      return (
+        <select
+          className="col-filter-select"
+          value={currentVal}
+          onChange={(e) => handleFilterChange('stage', e.target.value)}
+          aria-label="Filter by stage"
+        >
+          <option value="">All</option>
+          <option value={STAGES.TODO}>To Do</option>
+          <option value={STAGES.IN_PROGRESS}>In Progress</option>
+          <option value={STAGES.REVIEW}>In Review</option>
+          <option value={STAGES.COMPLETED}>Completed</option>
+        </select>
+      );
+    }
+
+    if (col.key === 'progress') {
+      return (
+        <select
+          className="col-filter-select"
+          value={currentVal}
+          onChange={(e) => handleFilterChange('progress', e.target.value)}
+          aria-label="Filter by progress"
+        >
+          <option value="">All</option>
+          <option value="0">0%</option>
+          <option value="1-49">1% - 49%</option>
+          <option value="50-99">50% - 99%</option>
+          <option value="100">100%</option>
+        </select>
+      );
+    }
+
+    if (col.key === 'final_dev_status') {
+      return (
+        <select
+          className="col-filter-select"
+          value={currentVal}
+          onChange={(e) => handleFilterChange('final_dev_status', e.target.value)}
+          aria-label="Filter by final dev status"
+        >
+          <option value="">All Statuses</option>
+          {uniqueDevStatuses.map(s => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      );
+    }
+
+    if (col.key === 'category') {
+      return (
+        <select
+          className="col-filter-select"
+          value={currentVal}
+          onChange={(e) => handleFilterChange('category', e.target.value)}
+          aria-label="Filter by category"
+        >
+          <option value="">All</option>
+          {uniqueCategories.map(c => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+      );
+    }
+
+    return (
+      <input
+        type="text"
+        className="col-filter-input"
+        placeholder={`Filter ${col.label}...`}
+        value={currentVal}
+        onChange={(e) => handleFilterChange(col.key, e.target.value)}
+        aria-label={`Filter by ${col.label}`}
+      />
+    );
+  };
+
   return (
     <div className="view-panel list-view-panel">
       <div className="table-card">
-        {/* Table Toolbar / Counter */}
+        {/* Table Top Toolbar */}
         <div className="table-top-toolbar">
-          <div className="table-count-info">
-            Showing <strong>{filteredTasks.length}</strong> of {tasks.length} tasks
-            {isFiltered && (
-              <span className="filter-active-pill">Filters active</span>
-            )}
+          <div className="table-left-tools">
+            <div className="table-count-info">
+              Showing <strong>{filteredTasks.length}</strong> of {tasks.length} tasks
+              {isFiltered && (
+                <span className="filter-active-pill">Filters active</span>
+              )}
+            </div>
+
+            {/* Quick View Preset Pills */}
+            <div className="table-presets-row">
+              <span className="presets-label">Views:</span>
+              <button
+                type="button"
+                className={`btn-table-preset ${visibleColKeys.length === COLUMN_PRESETS.DEFAULT.keys.length && COLUMN_PRESETS.DEFAULT.keys.every(k => visibleColKeys.includes(k)) ? 'active' : ''}`}
+                onClick={() => handleApplyPreset(COLUMN_PRESETS.DEFAULT)}
+              >
+                Default (12)
+              </button>
+              <button
+                type="button"
+                className={`btn-table-preset ${visibleColKeys.length === COLUMN_PRESETS.CORE.keys.length && COLUMN_PRESETS.CORE.keys.every(k => visibleColKeys.includes(k)) ? 'active' : ''}`}
+                onClick={() => handleApplyPreset(COLUMN_PRESETS.CORE)}
+              >
+                Core
+              </button>
+              <button
+                type="button"
+                className={`btn-table-preset ${visibleColKeys.length === COLUMN_PRESETS.BUSINESS.keys.length && COLUMN_PRESETS.BUSINESS.keys.every(k => visibleColKeys.includes(k)) ? 'active' : ''}`}
+                onClick={() => handleApplyPreset(COLUMN_PRESETS.BUSINESS)}
+              >
+                Business
+              </button>
+              <button
+                type="button"
+                className={`btn-table-preset ${visibleColKeys.length === COLUMN_PRESETS.DEV.keys.length && COLUMN_PRESETS.DEV.keys.every(k => visibleColKeys.includes(k)) ? 'active' : ''}`}
+                onClick={() => handleApplyPreset(COLUMN_PRESETS.DEV)}
+              >
+                Dev & IT
+              </button>
+              <button
+                type="button"
+                className={`btn-table-preset ${visibleColKeys.length === SPRINT_ALL_COLUMNS.length ? 'active' : ''}`}
+                onClick={handleSelectAllColumns}
+              >
+                All 37 Columns
+              </button>
+            </div>
           </div>
-          {isFiltered && (
-            <button
-              className="btn-clear-table-filters"
-              onClick={handleResetFilters}
-              type="button"
-            >
-              Reset Filters
-            </button>
-          )}
+
+          <div className="table-right-tools">
+            {isFiltered && (
+              <button
+                className="btn-clear-table-filters"
+                onClick={handleResetFilters}
+                type="button"
+              >
+                Clear Filters
+              </button>
+            )}
+
+            {/* Column Customizer Button & Popover */}
+            <div className="column-picker-wrapper" ref={pickerRef}>
+              <button
+                type="button"
+                className="btn-customize-columns"
+                onClick={() => setShowColumnPicker(prev => !prev)}
+                aria-expanded={showColumnPicker}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18" />
+                </svg>
+                <span>Columns ({activeColumns.length}/{SPRINT_ALL_COLUMNS.length})</span>
+              </button>
+
+              {showColumnPicker && (
+                <div className="column-picker-dropdown">
+                  <div className="picker-header">
+                    <div className="picker-title-row">
+                      <h4>Display Columns</h4>
+                      <div className="picker-actions">
+                        <button type="button" onClick={handleSelectAllColumns} className="btn-picker-link">
+                          All
+                        </button>
+                        <span>•</span>
+                        <button type="button" onClick={handleResetDefaultColumns} className="btn-picker-link">
+                          Default
+                        </button>
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search column..."
+                      className="picker-search-input"
+                      value={columnSearch}
+                      onChange={(e) => setColumnSearch(e.target.value)}
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className="picker-scroll-body">
+                    {Object.entries(columnsByCategory).map(([category, cols]) => {
+                      if (cols.length === 0) return null;
+                      return (
+                        <div key={category} className="picker-category-group">
+                          <div className="picker-category-title">{category}</div>
+                          <div className="picker-items-grid">
+                            {cols.map(col => {
+                              const isChecked = visibleColKeys.includes(col.key);
+                              return (
+                                <label key={col.key} className="picker-checkbox-item">
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => handleToggleColumn(col.key)}
+                                  />
+                                  <span className="picker-checkbox-label" title={col.label}>
+                                    {col.label}
+                                  </span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="picker-footer">
+                    <span>{visibleColKeys.length} of {SPRINT_ALL_COLUMNS.length} visible</span>
+                    <button
+                      type="button"
+                      className="btn-picker-done"
+                      onClick={() => setShowColumnPicker(false)}
+                    >
+                      Done
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Scrollable Table with Frozen Headers */}
-        <div className="table-scroll-wrapper">
+        {/* Scrollable Table with Horizontal & Vertical Scrolling */}
+        <div className="table-scroll-wrapper wide-scroll-table">
           <table className="tasks-table">
             <thead>
-              {/* Row 1: Column Titles */}
+              {/* Row 1: Header Titles */}
               <tr className="header-row">
-                <th className="col-header-cell col-title">TASK TITLE</th>
-                <th className="col-header-cell col-platform">PLATFORM</th>
-                <th className="col-header-cell col-assignee">ASSIGNEE</th>
-                <th className="col-header-cell col-priority">PRIORITY</th>
-                <th className="col-header-cell col-mandays">MANDAYS</th>
-                <th className="col-header-cell col-stage">STAGE</th>
-                <th className="col-header-cell col-progress">PROGRESS</th>
+                {activeColumns.map(col => (
+                  <th
+                    key={col.key}
+                    className={`col-header-cell col-${col.key} ${col.isSticky ? 'sticky-col' : ''}`}
+                    style={{
+                      minWidth: `${col.minWidth}px`,
+                      textAlign: col.align || 'left'
+                    }}
+                  >
+                    {col.label.toUpperCase()}
+                  </th>
+                ))}
               </tr>
 
               {/* Row 2: Frozen Column Filter Row */}
               <tr className="filter-row">
-                {/* Title Filter */}
-                <th className="col-filter-cell col-title">
-                  <input
-                    type="text"
-                    className="col-filter-input"
-                    placeholder="Search title..."
-                    value={filters.title}
-                    onChange={(e) => handleFilterChange('title', e.target.value)}
-                    aria-label="Filter by title"
-                  />
-                </th>
-
-                {/* Platform Filter */}
-                <th className="col-filter-cell col-platform">
-                  <select
-                    className="col-filter-select"
-                    value={filters.platform}
-                    onChange={(e) => handleFilterChange('platform', e.target.value)}
-                    aria-label="Filter by platform"
+                {activeColumns.map(col => (
+                  <th
+                    key={col.key}
+                    className={`col-filter-cell col-${col.key} ${col.isSticky ? 'sticky-col' : ''}`}
+                    style={{
+                      minWidth: `${col.minWidth}px`
+                    }}
                   >
-                    <option value="">All Platforms</option>
-                    {uniquePlatforms.map(p => (
-                      <option key={p} value={p}>{p}</option>
-                    ))}
-                  </select>
-                </th>
-
-                {/* Assignee Filter */}
-                <th className="col-filter-cell col-assignee">
-                  <select
-                    className="col-filter-select"
-                    value={filters.assignee}
-                    onChange={(e) => handleFilterChange('assignee', e.target.value)}
-                    aria-label="Filter by assignee"
-                  >
-                    <option value="">All Assignees</option>
-                    {uniqueAssignees.map(a => (
-                      <option key={a} value={a}>{a}</option>
-                    ))}
-                  </select>
-                </th>
-
-                {/* Priority Filter */}
-                <th className="col-filter-cell col-priority">
-                  <select
-                    className="col-filter-select"
-                    value={filters.priority}
-                    onChange={(e) => handleFilterChange('priority', e.target.value)}
-                    aria-label="Filter by priority"
-                  >
-                    <option value="">All</option>
-                    <option value={PRIORITIES.HIGH}>High</option>
-                    <option value={PRIORITIES.MEDIUM}>Medium</option>
-                    <option value={PRIORITIES.LOW}>Low</option>
-                  </select>
-                </th>
-
-                {/* Mandays Filter */}
-                <th className="col-filter-cell col-mandays">
-                  <input
-                    type="text"
-                    className="col-filter-input"
-                    placeholder="Filter MD..."
-                    value={filters.mandays}
-                    onChange={(e) => handleFilterChange('mandays', e.target.value)}
-                    aria-label="Filter by mandays"
-                  />
-                </th>
-
-                {/* Stage Filter */}
-                <th className="col-filter-cell col-stage">
-                  <select
-                    className="col-filter-select"
-                    value={filters.stage}
-                    onChange={(e) => handleFilterChange('stage', e.target.value)}
-                    aria-label="Filter by stage"
-                  >
-                    <option value="">All Stages</option>
-                    <option value={STAGES.TODO}>To Do</option>
-                    <option value={STAGES.IN_PROGRESS}>In Progress</option>
-                    <option value={STAGES.REVIEW}>In Review</option>
-                    <option value={STAGES.COMPLETED}>Completed</option>
-                  </select>
-                </th>
-
-                {/* Progress Filter */}
-                <th className="col-filter-cell col-progress">
-                  <select
-                    className="col-filter-select"
-                    value={filters.progress}
-                    onChange={(e) => handleFilterChange('progress', e.target.value)}
-                    aria-label="Filter by progress"
-                  >
-                    <option value="">All</option>
-                    <option value="0">0%</option>
-                    <option value="1-49">1% - 49%</option>
-                    <option value="50-99">50% - 99%</option>
-                    <option value="100">100%</option>
-                  </select>
-                </th>
+                    {renderFilterInput(col)}
+                  </th>
+                ))}
               </tr>
             </thead>
 
             <tbody>
               {filteredTasks.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="table-empty-cell">
+                  <td colSpan={activeColumns.length} className="table-empty-cell">
                     <div className="table-empty-wrap">
-                      <p>No tasks match the active column filters.</p>
+                      <p>No tasks match the active filters.</p>
                       {isFiltered && (
                         <button
                           className="btn-clear-table-filters"
@@ -269,62 +644,18 @@ export function ListView({ tasks, onTaskClick }) {
                     className="table-task-row"
                     tabIndex={0}
                   >
-                    <td className="cell-title">
-                      <strong>{task.title}</strong>
-                    </td>
-                    <td className="cell-platform">
-                      <div className="cell-platform-stack">
-                        {(() => {
-                          const pList = splitMultiValue(task.platforms || task.platform);
-                          if (pList.length === 0) {
-                            return <span className="platform-tag-pill">General</span>;
-                          }
-                          return pList.map((p, idx) => (
-                            <span key={idx} className="platform-tag-pill" title={`Platform: ${p}`}>
-                              {p}
-                            </span>
-                          ));
-                        })()}
-                      </div>
-                    </td>
-                    <td className="cell-assignee">
-                      <div className="cell-assignee-stack">
-                        {(() => {
-                          const aList = splitMultiValue(task.assignees || task.assignee);
-                          if (aList.length === 0) {
-                            return <span className="assignee-empty-text">Unassigned</span>;
-                          }
-                          return aList.map((a, idx) => (
-                            <div key={idx} className="assignee-row-chip" title={`Assignee: ${a}`}>
-                              <Avatar name={a} size={20} />
-                              <span className="assignee-name-text">{a}</span>
-                            </div>
-                          ));
-                        })()}
-                      </div>
-                    </td>
-                    <td className="cell-priority">
-                      <PriorityBadge priority={task.priority} />
-                    </td>
-                    <td className="cell-mandays">
-                      <strong>{task.mandays || 5} MD</strong>
-                    </td>
-                    <td className="cell-stage">
-                      <span className={`stage-text-tag ${(task.stage || 'todo')}`}>
-                        {(task.stage || 'todo').replace('-', ' ')}
-                      </span>
-                    </td>
-                    <td className="cell-progress">
-                      <div className="table-progress-box">
-                        <span>{task.progress || 0}%</span>
-                        <div className="table-mini-bar-track">
-                          <div
-                            className="table-mini-bar-fill"
-                            style={{ width: `${task.progress || 0}%` }}
-                          />
-                        </div>
-                      </div>
-                    </td>
+                    {activeColumns.map(col => (
+                      <td
+                        key={col.key}
+                        className={`cell-${col.key} ${col.isSticky ? 'sticky-col' : ''}`}
+                        style={{
+                          minWidth: `${col.minWidth}px`,
+                          textAlign: col.align || 'left'
+                        }}
+                      >
+                        {renderCellContent(task, col)}
+                      </td>
+                    ))}
                   </tr>
                 ))
               )}
