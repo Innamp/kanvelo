@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { PRIORITIES, DEFAULT_PLATFORMS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import { MultiValueInput } from '../common/MultiValueInput';
+import { DatePicker } from '../common/DatePicker';
 import { splitMultiValue, joinMultiValue } from '../../utils/taskHelpers';
 
 const TABS = [
@@ -679,12 +680,9 @@ export function TaskEditModal({
                 <div className="form-grid-3col">
                   <div className="form-group-field">
                     <label htmlFor="taskBrdSubmissionDate">BRD Submission Date</label>
-                    <input
+                    <DatePicker
                       id="taskBrdSubmissionDate"
                       name="brd_submission_date"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD or date"
                       value={formData.brd_submission_date || ''}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}
@@ -693,12 +691,9 @@ export function TaskEditModal({
 
                   <div className="form-group-field">
                     <label htmlFor="taskPrdCreationDate">PRD Creation Date</label>
-                    <input
+                    <DatePicker
                       id="taskPrdCreationDate"
                       name="prd_creation_date"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD or date"
                       value={formData.prd_creation_date || ''}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}
@@ -707,12 +702,9 @@ export function TaskEditModal({
 
                   <div className="form-group-field">
                     <label htmlFor="taskDateSharingReqSe">Date Sharing Req to SE</label>
-                    <input
+                    <DatePicker
                       id="taskDateSharingReqSe"
                       name="date_sharing_req_se"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD or date"
                       value={formData.date_sharing_req_se || ''}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}
@@ -723,12 +715,9 @@ export function TaskEditModal({
                 <div className="form-grid-2col">
                   <div className="form-group-field">
                     <label htmlFor="taskUatDate">UAT Date</label>
-                    <input
+                    <DatePicker
                       id="taskUatDate"
                       name="uat_date"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD or date"
                       value={formData.uat_date || ''}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}
@@ -737,12 +726,9 @@ export function TaskEditModal({
 
                   <div className="form-group-field">
                     <label htmlFor="taskDeploymentDate">Deployment Date</label>
-                    <input
+                    <DatePicker
                       id="taskDeploymentDate"
                       name="deployment_date"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD or date"
                       value={formData.deployment_date || ''}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}

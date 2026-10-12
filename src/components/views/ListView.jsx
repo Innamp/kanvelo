@@ -423,6 +423,18 @@ export function ListView({ tasks, onTaskClick }) {
       );
     }
 
+    if (col.type === 'date') {
+      return (
+        <input
+          type="date"
+          className="col-filter-input col-filter-date"
+          value={currentVal}
+          onChange={(e) => handleFilterChange(col.key, e.target.value)}
+          aria-label={`Filter by ${col.label}`}
+        />
+      );
+    }
+
     return (
       <input
         type="text"

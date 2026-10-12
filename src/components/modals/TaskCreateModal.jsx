@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { PRIORITIES, STAGES, DEFAULT_PLATFORMS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import { MultiValueInput } from '../common/MultiValueInput';
+import { DatePicker } from '../common/DatePicker';
 import { splitMultiValue, joinMultiValue } from '../../utils/taskHelpers';
 
 const TABS = [
@@ -650,12 +651,9 @@ export function TaskCreateModal({
                 <div className="form-grid-3col">
                   <div className="form-group-field">
                     <label htmlFor="createBrdSubmissionDate">BRD Submission Date</label>
-                    <input
+                    <DatePicker
                       id="createBrdSubmissionDate"
                       name="brd_submission_date"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD"
                       value={formData.brd_submission_date}
                       onChange={handleChange}
                     />
@@ -663,12 +661,9 @@ export function TaskCreateModal({
 
                   <div className="form-group-field">
                     <label htmlFor="createPrdCreationDate">PRD Creation Date</label>
-                    <input
+                    <DatePicker
                       id="createPrdCreationDate"
                       name="prd_creation_date"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD"
                       value={formData.prd_creation_date}
                       onChange={handleChange}
                     />
@@ -676,12 +671,9 @@ export function TaskCreateModal({
 
                   <div className="form-group-field">
                     <label htmlFor="createDateSharingReqSe">Date Sharing Req to SE</label>
-                    <input
+                    <DatePicker
                       id="createDateSharingReqSe"
                       name="date_sharing_req_se"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD"
                       value={formData.date_sharing_req_se}
                       onChange={handleChange}
                     />
@@ -691,12 +683,9 @@ export function TaskCreateModal({
                 <div className="form-grid-2col">
                   <div className="form-group-field">
                     <label htmlFor="createUatDate">UAT Date</label>
-                    <input
+                    <DatePicker
                       id="createUatDate"
                       name="uat_date"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD"
                       value={formData.uat_date}
                       onChange={handleChange}
                     />
@@ -704,12 +693,9 @@ export function TaskCreateModal({
 
                   <div className="form-group-field">
                     <label htmlFor="createDeploymentDate">Deployment Date</label>
-                    <input
+                    <DatePicker
                       id="createDeploymentDate"
                       name="deployment_date"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="YYYY-MM-DD"
                       value={formData.deployment_date}
                       onChange={handleChange}
                     />

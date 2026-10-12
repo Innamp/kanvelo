@@ -4598,3 +4598,123 @@ body {
   box-shadow: 3px 0 6px -2px rgba(0, 0, 0, 0.06);
 }
 
+/* ==========================================================================
+   DATE PICKER COMPONENT STYLES
+   ========================================================================== */
+.datepicker-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: #ffffff;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+.datepicker-wrapper:hover:not(.disabled) {
+  border-color: #94a3b8;
+}
+
+.datepicker-wrapper:focus-within:not(.disabled) {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 0 3px rgba(23, 138, 112, 0.12);
+}
+
+.datepicker-wrapper.disabled {
+  background: #f8fafc;
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.datepicker-native-input {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #1e293b;
+  outline: none;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.datepicker-native-input:disabled {
+  cursor: not-allowed;
+  color: #64748b;
+}
+
+.datepicker-native-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  filter: invert(0.3);
+  transition: opacity 0.15s ease;
+  margin-right: 4px;
+}
+
+.datepicker-native-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.datepicker-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 12px;
+  flex-shrink: 0;
+}
+
+.datepicker-clear-btn {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.datepicker-clear-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.datepicker-calendar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f766e;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.col-filter-date {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 0 4px;
+  cursor: pointer;
+}
+
+.col-filter-date::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  opacity: 0.6;
+}
+
+.col-filter-date::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+
