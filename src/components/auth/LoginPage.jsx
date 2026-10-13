@@ -10,7 +10,6 @@ export function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showCredsHint, setShowCredsHint] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,12 +25,6 @@ export function LoginPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleFillCredentials = (fillEmail, fillPass) => {
-    setEmail(fillEmail);
-    setPassword(fillPass);
-    setError('');
   };
 
   return (
@@ -193,74 +186,6 @@ export function LoginPage() {
               )}
             </button>
           </form>
-
-          {/* Collapsible Production Credentials Reference */}
-          <div className="login-creds-container">
-            <button
-              type="button"
-              className="login-creds-toggle-btn"
-              onClick={() => setShowCredsHint(prev => !prev)}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="16" x2="12" y2="12" />
-                <line x1="12" y1="8" x2="12.01" y2="8" />
-              </svg>
-              <span>{showCredsHint ? 'Hide Default User Credentials' : 'View Default User Credentials'}</span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                style={{ transform: showCredsHint ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {showCredsHint && (
-              <div className="login-creds-drawer">
-                <div className="login-creds-table">
-                  <div className="creds-row" onClick={() => handleFillCredentials('inna.mp@sampoerna.com', 'innamp2026')}>
-                    <div className="creds-role role-admin">Administrator</div>
-                    <div className="creds-data">
-                      <code>inna.mp@sampoerna.com</code>
-                      <span className="creds-pass">Pass: <strong>innamp2026</strong></span>
-                    </div>
-                  </div>
-
-                  <div className="creds-row" onClick={() => handleFillCredentials('sarah.j@novaboard.io', 'sarah123')}>
-                    <div className="creds-role role-contributor">Contributor</div>
-                    <div className="creds-data">
-                      <code>sarah.j@novaboard.io</code>
-                      <span className="creds-pass">Pass: <strong>sarah123</strong></span>
-                    </div>
-                  </div>
-
-                  <div className="creds-row" onClick={() => handleFillCredentials('alex.r@novaboard.io', 'alex123')}>
-                    <div className="creds-role role-contributor">Contributor</div>
-                    <div className="creds-data">
-                      <code>alex.r@novaboard.io</code>
-                      <span className="creds-pass">Pass: <strong>alex123</strong></span>
-                    </div>
-                  </div>
-
-                  <div className="creds-row" onClick={() => handleFillCredentials('guest.viewer@novaboard.io', 'viewer123')}>
-                    <div className="creds-role role-viewer">Viewer</div>
-                    <div className="creds-data">
-                      <code>guest.viewer@novaboard.io</code>
-                      <span className="creds-pass">Pass: <strong>viewer123</strong></span>
-                    </div>
-                  </div>
-                </div>
-                <p className="creds-note">
-                  Click any account row to populate the form fields, then click Sign In to authenticate.
-                </p>
-              </div>
-            )}
-          </div>
 
           {/* Footer note */}
           <div className="login-card-footer">
