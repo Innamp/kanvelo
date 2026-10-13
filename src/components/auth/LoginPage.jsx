@@ -4,8 +4,8 @@ import { StarIcon } from '../common/Icons';
 
 export function LoginPage() {
   const { login } = useAuth();
-  const [email, setEmail] = useState('john.doe@novaboard.io');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('inna.mp@sampoerna.com');
+  const [password, setPassword] = useState('innamp2026');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
@@ -99,7 +99,7 @@ export function LoginPage() {
                   id="loginEmail"
                   type="email"
                   className="login-input"
-                  placeholder="name@novaboard.io"
+                  placeholder="inna.mp@sampoerna.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
@@ -223,11 +223,11 @@ export function LoginPage() {
             {showCredsHint && (
               <div className="login-creds-drawer">
                 <div className="login-creds-table">
-                  <div className="creds-row" onClick={() => handleFillCredentials('john.doe@novaboard.io', 'admin123')}>
+                  <div className="creds-row" onClick={() => handleFillCredentials('inna.mp@sampoerna.com', 'innamp2026')}>
                     <div className="creds-role role-admin">Administrator</div>
                     <div className="creds-data">
-                      <code>john.doe@novaboard.io</code>
-                      <span className="creds-pass">Pass: <strong>admin123</strong></span>
+                      <code>inna.mp@sampoerna.com</code>
+                      <span className="creds-pass">Pass: <strong>innamp2026</strong></span>
                     </div>
                   </div>
 

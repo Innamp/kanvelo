@@ -37,7 +37,7 @@ try {
     $userCount = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
     if ($userCount == 0) {
         $defaultUsers = [
-            ['usr-1', 'John Doe', 'john.doe@novaboard.io', 'admin123', 'administrator', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop'],
+            ['usr-1', 'Inna MP', 'inna.mp@sampoerna.com', 'innamp2026', 'administrator', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop'],
             ['usr-2', 'Sarah Jenkins', 'sarah.j@novaboard.io', 'sarah123', 'contributor', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop'],
             ['usr-3', 'Alex Rivera', 'alex.r@novaboard.io', 'alex123', 'contributor', 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&h=80&fit=crop'],
             ['usr-4', 'Guest Viewer', 'guest.viewer@novaboard.io', 'viewer123', 'viewer', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop']
@@ -47,8 +47,16 @@ try {
             $insertStmt->execute($u);
         }
     } else {
-        // Ensure default users have passwords populated
-        $pdo->exec("UPDATE users SET password = 'admin123' WHERE email = 'john.doe@novaboard.io' AND (password IS NULL OR password = '')");
+        // Ensure Inna MP exists and default users have passwords populated
+        $pdo->exec("
+            INSERT INTO users (id, name, email, password, role, avatar)
+            VALUES ('usr-1', 'Inna MP', 'inna.mp@sampoerna.com', 'innamp2026', 'administrator', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop')
+            ON CONFLICT(id) DO UPDATE SET
+                name = 'Inna MP',
+                email = 'inna.mp@sampoerna.com',
+                password = 'innamp2026',
+                role = 'administrator'
+        ");
         $pdo->exec("UPDATE users SET password = 'sarah123' WHERE email = 'sarah.j@novaboard.io' AND (password IS NULL OR password = '')");
         $pdo->exec("UPDATE users SET password = 'alex123' WHERE email = 'alex.r@novaboard.io' AND (password IS NULL OR password = '')");
         $pdo->exec("UPDATE users SET password = 'viewer123' WHERE email = 'guest.viewer@novaboard.io' AND (password IS NULL OR password = '')");

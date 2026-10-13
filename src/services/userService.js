@@ -7,11 +7,11 @@ const ACTIVE_USER_KEY = 'novaboard_active_user';
 export const DEFAULT_USERS = [
   {
     id: 'usr-1',
-    name: 'John Doe',
-    email: 'john.doe@novaboard.io',
-    password: 'admin123',
+    name: 'Inna MP',
+    email: 'inna.mp@sampoerna.com',
+    password: 'innamp2026',
     role: ROLES.ADMIN,
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop'
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop'
   },
   {
     id: 'usr-2',
@@ -40,8 +40,21 @@ export const DEFAULT_USERS = [
 ];
 
 function normalizeUsersWithPasswords(usersList) {
-  if (!Array.isArray(usersList)) return DEFAULT_USERS;
-  return usersList.map(u => {
+  if (!Array.isArray(usersList) || usersList.length === 0) return DEFAULT_USERS;
+
+  // Ensure inna.mp@sampoerna.com exists as default administrator
+  const hasInna = usersList.some(u => (u.email || '').toLowerCase() === 'inna.mp@sampoerna.com');
+  let list = [...usersList];
+  if (!hasInna) {
+    const oldAdminIdx = list.findIndex(u => u.email === 'john.doe@novaboard.io' || u.id === 'usr-1');
+    if (oldAdminIdx !== -1) {
+      list[oldAdminIdx] = DEFAULT_USERS[0];
+    } else {
+      list.unshift(DEFAULT_USERS[0]);
+    }
+  }
+
+  return list.map(u => {
     if (!u.password) {
       const match = DEFAULT_USERS.find(d => d.id === u.id || (d.email && u.email && d.email.toLowerCase() === u.email.toLowerCase()));
       return {
@@ -170,12 +183,16 @@ class UserService {
     const cached = localStorage.getItem(ACTIVE_USER_KEY);
     if (cached) {
       try {
-        return JSON.parse(cached);
+        const parsed = JSON.parse(cached);
+        if (parsed.email === 'john.doe@novaboard.io') {
+          return DEFAULT_USERS[0];
+        }
+        return parsed;
       } catch (e) {
         console.error(e);
       }
     }
-    return DEFAULT_USERS[0]; // John Doe (Admin) by default
+    return DEFAULT_USERS[0]; // Inna MP (Admin) by default
   }
 
   setActiveUser(user) {
