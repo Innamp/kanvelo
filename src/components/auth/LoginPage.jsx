@@ -4,8 +4,8 @@ import { PhilipMorrisLogo } from '../common/Icons';
 
 export function LoginPage() {
   const { login } = useAuth();
-  const [email, setEmail] = useState('inna.mp@sampoerna.com');
-  const [password, setPassword] = useState('innamp2026');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
@@ -92,7 +92,7 @@ export function LoginPage() {
                   id="loginEmail"
                   type="email"
                   className="login-input"
-                  placeholder="inna.mp@sampoerna.com"
+                  placeholder="name@sampoerna.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
