@@ -58,9 +58,7 @@ export function PhasesTimelineTab({ sprint }) {
     const todayTs = now.getTime();
     let todayOffsetPct = -1;
     if (todayTs >= startTs && todayTs <= endTs) {
-      todayOffsetPct = ((todayTs - startTs) / totalDuration) * 100;
-    } else if (todayTs > endTs) {
-      todayOffsetPct = 100;
+      todayOffsetPct = Math.max(0, Math.min(100, ((todayTs - startTs) / totalDuration) * 100));
     }
 
     return {
@@ -196,8 +194,10 @@ export function PhasesTimelineTab({ sprint }) {
                 >
                   <div className="gantt-row-label">
                     <span className="gantt-idx">#{phase.number}</span>
-                    <strong className="gantt-name" title={phase.name}>{phase.name}</strong>
-                    <span className="gantt-owner">{phase.owner}</span>
+                    <div className="gantt-label-text-col">
+                      <strong className="gantt-name" title={phase.name}>{phase.name}</strong>
+                      <span className="gantt-owner">{phase.owner}</span>
+                    </div>
                   </div>
 
                   <div className="gantt-row-track">

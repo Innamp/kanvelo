@@ -85,6 +85,15 @@ export function SprintComparisonReport() {
     window.print();
   };
 
+  const maxCapacityOrPlanned = useMemo(() => {
+    let max = 200;
+    sprintComparisonData.forEach(d => {
+      if (d.capacity > max) max = d.capacity;
+      if (d.plannedMandays > max) max = d.plannedMandays;
+    });
+    return Math.max(300, Math.ceil(max * 1.15));
+  }, [sprintComparisonData]);
+
   return (
     <div className="sprint-comparison-page animate-fade-in">
       {/* Header & Export Actions */}
@@ -102,10 +111,10 @@ export function SprintComparisonReport() {
         </div>
 
         <div className="report-actions-wrap">
-          <button className="btn-secondary btn-sm" onClick={handleExportCSV}>
+          <button className="btn-secondary btn-pill" onClick={handleExportCSV}>
             📥 Export to CSV
           </button>
-          <button className="btn-primary btn-sm" onClick={handlePrintPDF}>
+          <button className="btn-primary btn-pill" onClick={handlePrintPDF}>
             📄 Print / PDF
           </button>
         </div>
@@ -115,28 +124,34 @@ export function SprintComparisonReport() {
       <div className="report-charts-grid">
         {/* Mandays vs Capacity Comparison */}
         <div className="report-chart-card card-styled">
-          <h4>Planned Mandays vs Sprint Capacity</h4>
-          <span className="text-muted text-xs">Comparison of estimated workload vs team capacity</span>
+          <div className="chart-head-row">
+            <h4>Planned Mandays vs Sprint Capacity</h4>
+            <span className="text-muted text-xs">Comparison of estimated workload vs team capacity</span>
+          </div>
 
           <div className="chart-bars-wrap">
             {sprintComparisonData.map(d => {
-              const maxVal = 250;
-              const capPct = Math.min(100, (d.capacity / maxVal) * 100);
-              const planPct = Math.min(100, (d.plannedMandays / maxVal) * 100);
+              const capPct = Math.min(100, Math.round((d.capacity / maxCapacityOrPlanned) * 100));
+              const planPct = Math.min(100, Math.round((d.plannedMandays / maxCapacityOrPlanned) * 100));
+              const isOver = d.plannedMandays > d.capacity;
 
               return (
                 <div key={d.id} className="chart-bar-group">
                   <div className="bar-towers">
                     <div
                       className="bar-tower tower-capacity"
-                      style={{ height: `${capPct}%` }}
+                      style={{ height: `${Math.max(6, capPct)}%` }}
                       title={`${d.name} Capacity: ${d.capacity} MD`}
-                    />
+                    >
+                      <span className="tower-val-tooltip">{d.capacity}</span>
+                    </div>
                     <div
-                      className={`bar-tower tower-planned ${d.plannedMandays > d.capacity ? 'tower-over' : ''}`}
-                      style={{ height: `${planPct}%` }}
+                      className={`bar-tower tower-planned ${isOver ? 'tower-over' : ''}`}
+                      style={{ height: `${Math.max(6, planPct)}%` }}
                       title={`${d.name} Planned: ${d.plannedMandays} MD`}
-                    />
+                    >
+                      <span className="tower-val-tooltip">{d.plannedMandays}</span>
+                    </div>
                   </div>
                   <span className="tower-label">S{d.number}</span>
                 </div>

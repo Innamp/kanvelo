@@ -35,15 +35,26 @@ export function OverviewTab({ sprint, metrics, onTabChange }) {
         </div>
 
         <div className="hero-progress-ring-card">
-          <div className="progress-ring-stat">
-            <span className="stat-large-num">{metrics.completionRate}%</span>
-            <span className="stat-large-label">Completion</span>
-          </div>
-          <div className="progress-bar-track hero-track">
-            <div
-              className="progress-bar-fill fill-primary"
-              style={{ width: `${Math.min(100, metrics.completionRate)}%` }}
-            />
+          <div className="circular-gauge-wrap">
+            <svg className="circular-gauge-svg" viewBox="0 0 96 96">
+              <circle className="gauge-bg-circle" cx="48" cy="48" r="38" strokeWidth="8" fill="none" />
+              <circle
+                className="gauge-progress-circle"
+                cx="48"
+                cy="48"
+                r="38"
+                strokeWidth="8"
+                fill="none"
+                strokeDasharray="239"
+                strokeDashoffset={239 - (239 * Math.min(100, metrics.completionRate)) / 100}
+                strokeLinecap="round"
+                transform="rotate(-90 48 48)"
+              />
+            </svg>
+            <div className="gauge-inner-content">
+              <span className="gauge-num">{metrics.completionRate}%</span>
+              <span className="gauge-label">Delivery</span>
+            </div>
           </div>
           <span className="ring-subtext">{metrics.deployedTickets} of {metrics.totalTickets} tickets delivered</span>
         </div>

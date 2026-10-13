@@ -1040,7 +1040,7 @@ export const INITIAL_SPRINT_DATA = {
         "priority": "High",
         "stage": "in-progress",
         "progress": 45,
-        "mandays": "143625",
+        "mandays": "14",
         "jira": "CDE-25957",
         "dependency": "",
         "statusRaw": "Develop in Sprint 9 Lintas sprint 9-10\n& Q1-2026",

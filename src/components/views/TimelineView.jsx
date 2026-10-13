@@ -53,6 +53,7 @@ export function TimelineView({ onSelectSprint }) {
             className="filter-select-input"
           >
             <option value="all">All Years</option>
+            <option value="2024">2024</option>
             <option value="2025">2025</option>
           </select>
         </div>
@@ -60,6 +61,13 @@ export function TimelineView({ onSelectSprint }) {
 
       {/* Cross-Sprint Timeline Board */}
       <div className="timeline-board-card card-styled">
+        <div className="timeline-card-header">
+          <div>
+            <h4>Horizontal Sprint Roadmap (S1 to S10)</h4>
+            <span className="text-muted text-xs">Chronological timeline tracking duration and active phase</span>
+          </div>
+          <span className="badge-trail-count">{filteredSprints.length} Sprints</span>
+        </div>
         <div className="timeline-canvas-container">
           {/* Vertical Today Line */}
           {todayPct >= 0 && todayPct <= 100 && (

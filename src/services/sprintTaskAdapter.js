@@ -62,7 +62,8 @@ export function normalizeTask(task, sprintId) {
     user: 'Inna MP'
   });
 
-  const plannedMd = parseFloat(task.mandays) || (task.priority === 'High' ? 6 : task.priority === 'Medium' ? 4 : 2);
+  let plannedMd = parseFloat(task.mandays) || (task.priority === 'High' ? 6 : task.priority === 'Medium' ? 4 : 2);
+  if (plannedMd > 500) plannedMd = 14;
   const consumedMd = isSprintCompleted ? plannedMd : (stage === 'completed' ? plannedMd : (stage === 'review' ? plannedMd * 0.85 : (stage === 'in-progress' ? plannedMd * 0.5 : 0)));
 
   return {
@@ -112,7 +113,15 @@ export function getSprintTasks(sprintId) {
   const cached = localStorage.getItem(cacheKey);
   if (cached) {
     try {
-      return JSON.parse(cached);
+      const parsed = JSON.parse(cached);
+      return parsed.map(t => {
+        if (parseFloat(t.mandays) > 500) {
+          t.mandays = '14';
+          t.planned_mandays = 14;
+          t.consumed_mandays = Math.min(14, t.consumed_mandays);
+        }
+        return t;
+      });
     } catch (e) {
       console.error('Failed to parse cached sprint tasks', e);
     }

@@ -364,24 +364,44 @@ export function SprintListView({ onSelectSprint }) {
 
                 {/* Ticket Status Breakdown Pills */}
                 <div className="sprint-ticket-states-grid">
-                  <span className="status-counter-pill state-deployed" title="Deployed tickets">
-                    🚀 {metrics.deployedTickets} Deployed
-                  </span>
-                  <span className="status-counter-pill state-dev" title="In Development">
-                    ⚙️ {metrics.devTickets} Dev
-                  </span>
-                  <span className="status-counter-pill state-uat" title="In UAT">
-                    🧪 {metrics.uatTickets} UAT
-                  </span>
-                  <span className="status-counter-pill state-carryover" title="Carry-over tickets">
-                    🔁 {metrics.carryOverTickets} Carry Over
-                  </span>
-                  <span className="status-counter-pill state-deprioritized" title="Deprioritized">
-                    ⏸️ {metrics.deprioritizedTickets} Deprio
-                  </span>
+                  {metrics.deployedTickets > 0 && (
+                    <span className="status-counter-pill state-deployed" title="Deployed tickets">
+                      🚀 {metrics.deployedTickets} Deployed
+                    </span>
+                  )}
+                  {metrics.devTickets > 0 && (
+                    <span className="status-counter-pill state-dev" title="In Development">
+                      ⚙️ {metrics.devTickets} Dev
+                    </span>
+                  )}
+                  {metrics.uatTickets > 0 && (
+                    <span className="status-counter-pill state-uat" title="In UAT">
+                      🧪 {metrics.uatTickets} UAT
+                    </span>
+                  )}
+                  {metrics.readyToDeployTickets > 0 && (
+                    <span className="status-counter-pill state-ready" title="Ready to Deploy">
+                      📦 {metrics.readyToDeployTickets} Ready
+                    </span>
+                  )}
+                  {metrics.carryOverTickets > 0 && (
+                    <span className="status-counter-pill state-carryover" title="Carry-over tickets">
+                      🔁 {metrics.carryOverTickets} Carry Over
+                    </span>
+                  )}
+                  {metrics.deprioritizedTickets > 0 && (
+                    <span className="status-counter-pill state-deprioritized" title="Deprioritized">
+                      ⏸️ {metrics.deprioritizedTickets} Deprio
+                    </span>
+                  )}
                   {metrics.overdueTickets > 0 && (
                     <span className="status-counter-pill state-overdue" title="Overdue tickets">
                       ⚠️ {metrics.overdueTickets} Overdue
+                    </span>
+                  )}
+                  {metrics.deployedTickets === 0 && metrics.devTickets === 0 && metrics.uatTickets === 0 && (
+                    <span className="status-counter-pill state-planned" title="Planned tickets">
+                      📝 {metrics.totalTickets} Planned
                     </span>
                   )}
                 </div>

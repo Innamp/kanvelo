@@ -1,3 +1,4 @@
+import React from 'react';
 import pmiLogoSvg from '../../assets/pmi-logo.svg';
 
 export function PhilipMorrisLogo({ size = 32, className = '', ...props }) {
