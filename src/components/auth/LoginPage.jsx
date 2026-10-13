@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { StarIcon } from '../common/Icons';
+import { PhilipMorrisLogo } from '../common/Icons';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -37,8 +37,8 @@ export function LoginPage() {
         <div className="login-card-production">
           {/* Brand Header */}
           <div className="login-brand-center">
-            <div className="login-brand-mark" title="Kanvelo">
-              <StarIcon size={24} />
+            <div className="login-brand-mark" title="Philip Morris International">
+              <PhilipMorrisLogo size={28} />
             </div>
             <div className="login-brand-meta">
               <div className="login-brand-title-row">

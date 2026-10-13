@@ -2,7 +2,7 @@ import React from 'react';
 import { VIEWS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import {
-  StarIcon,
+  PhilipMorrisLogo,
   HomeIcon,
   BoardIcon,
   CheckCircleIcon,
@@ -19,8 +19,8 @@ export function Sidebar({ currentView, onViewChange, onOpenUserControl }) {
   return (
     <aside className="app-sidebar" aria-label="Main Navigation">
       <div className="sidebar-top">
-        <div className="brand-mark" title="Kanvelo">
-          <StarIcon />
+        <div className="brand-mark" title="Philip Morris International">
+          <PhilipMorrisLogo size={28} />
         </div>
 
         <nav className="sidebar-nav">
