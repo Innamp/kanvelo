@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { PRIORITIES, DEFAULT_PLATFORMS } from '../../constants';
+import { PRIORITIES, DEFAULT_PLATFORMS, SPRINTS } from '../../constants';
+import { SPRINT_PHASE_NAMES, UAT_STATUSES, DEPLOYMENT_READINESS } from '../../constants/sprintConstants';
 import { useAuth } from '../../context/AuthContext';
 import { MultiValueInput } from '../common/MultiValueInput';
 import { DatePicker } from '../common/DatePicker';
 import { YesNoSwitch } from '../common/YesNoSwitch';
+import { ArrowRightIcon } from '../common/Icons';
 import { splitMultiValue, joinMultiValue } from '../../utils/taskHelpers';
 
 const TABS = [
@@ -566,18 +568,228 @@ export function TaskEditModal({
             {/* TAB 4: SPRINT & DEV */}
             {activeTab === 'dev' && (
               <div className="tab-pane">
+                {/* Visual Sprint Progression Ribbon */}
+                <div className="modal-sprint-ribbon-card card-styled mb-4">
+                  <span className="ribbon-label">Sprint Lifecycle Chain:</span>
+                  <div className="sprint-chain-ribbon">
+                    <span className="chain-step-node">
+                      {formData.first_shown_sprint || formData.ticket_1st_shown || 'Sprint 8'}
+                    </span>
+                    <ArrowRightIcon size={14} className="chain-arrow" />
+                    <span className="chain-step-node active-node">
+                      {formData.current_sprint || 'Sprint 10'}
+                    </span>
+                    {(formData.target_deployment_sprint || formData.cross_sprint_to) &&
+                      (formData.target_deployment_sprint !== formData.current_sprint) && (
+                        <>
+                          <ArrowRightIcon size={14} className="chain-arrow" />
+                          <span className="chain-step-node target-node">
+                            {formData.target_deployment_sprint || formData.cross_sprint_to}
+                          </span>
+                        </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Sprint Master Selectors */}
                 <div className="form-grid-3col">
                   <div className="form-group-field">
-                    <label htmlFor="taskDevelopInSprint">Develop in Sprint?</label>
-                    <YesNoSwitch
-                      id="taskDevelopInSprint"
-                      name="develop_in_sprint"
-                      value={formData.develop_in_sprint || ''}
+                    <label htmlFor="taskCurrentSprint">Current Sprint *</label>
+                    <select
+                      id="taskCurrentSprint"
+                      name="current_sprint"
+                      className="form-input-field"
+                      value={formData.current_sprint || 'sprint-10'}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    >
+                      {SPRINTS.filter(s => s.id !== 'all').map(s => (
+                        <option key={s.id} value={s.id}>{s.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group-field">
+                    <label htmlFor="taskFirstShownSprint">1st Shown in Sprint</label>
+                    <select
+                      id="taskFirstShownSprint"
+                      name="first_shown_sprint"
+                      className="form-input-field"
+                      value={formData.first_shown_sprint || formData.ticket_1st_shown || 'sprint-8'}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    >
+                      {SPRINTS.filter(s => s.id !== 'all').map(s => (
+                        <option key={s.id} value={s.id}>{s.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group-field">
+                    <label htmlFor="taskStartDevInSprint">Start Dev in Sprint</label>
+                    <select
+                      id="taskStartDevInSprint"
+                      name="start_dev_in_sprint"
+                      className="form-input-field"
+                      value={formData.start_dev_in_sprint || 'sprint-9'}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    >
+                      {SPRINTS.filter(s => s.id !== 'all').map(s => (
+                        <option key={s.id} value={s.id}>{s.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-grid-3col">
+                  <div className="form-group-field">
+                    <label htmlFor="taskTargetDeploySprint">Target Deploy Sprint</label>
+                    <select
+                      id="taskTargetDeploySprint"
+                      name="target_deployment_sprint"
+                      className="form-input-field"
+                      value={formData.target_deployment_sprint || 'sprint-10'}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    >
+                      {SPRINTS.filter(s => s.id !== 'all').map(s => (
+                        <option key={s.id} value={s.id}>{s.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group-field">
+                    <label htmlFor="taskExpectedDeploySprint">Expected Deploy Sprint</label>
+                    <select
+                      id="taskExpectedDeploySprint"
+                      name="expected_deployment_sprint"
+                      className="form-input-field"
+                      value={formData.expected_deployment_sprint || formData.cross_sprint_to || 'sprint-10'}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    >
+                      {SPRINTS.filter(s => s.id !== 'all').map(s => (
+                        <option key={s.id} value={s.id}>{s.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group-field">
+                    <label htmlFor="taskPreviousSprint">Previous Sprint</label>
+                    <select
+                      id="taskPreviousSprint"
+                      name="previous_sprint"
+                      className="form-input-field"
+                      value={formData.previous_sprint || 'sprint-9'}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    >
+                      <option value="">None</option>
+                      {SPRINTS.filter(s => s.id !== 'all').map(s => (
+                        <option key={s.id} value={s.id}>{s.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Phase & Readiness */}
+                <div className="form-grid-3col">
+                  <div className="form-group-field">
+                    <label htmlFor="taskCurrentSprintPhase">Current Sprint Phase</label>
+                    <select
+                      id="taskCurrentSprintPhase"
+                      name="current_sprint_phase"
+                      className="form-input-field"
+                      value={formData.current_sprint_phase || formData.currentPhase || 'Development'}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    >
+                      {SPRINT_PHASE_NAMES.map(ph => (
+                        <option key={ph} value={ph}>{ph}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group-field">
+                    <label htmlFor="taskUatStatus">UAT Status</label>
+                    <select
+                      id="taskUatStatus"
+                      name="uat_status"
+                      className="form-input-field"
+                      value={formData.uat_status || UAT_STATUSES.NOT_STARTED}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    >
+                      {Object.values(UAT_STATUSES).map(st => (
+                        <option key={st} value={st}>{st}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group-field">
+                    <label htmlFor="taskDeployReadiness">Deployment Readiness</label>
+                    <select
+                      id="taskDeployReadiness"
+                      name="deployment_readiness"
+                      className="form-input-field"
+                      value={formData.deployment_readiness || DEPLOYMENT_READINESS.NOT_READY}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    >
+                      {Object.values(DEPLOYMENT_READINESS).map(r => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Mandays & Toggles */}
+                <div className="form-grid-3col">
+                  <div className="form-group-field">
+                    <label htmlFor="taskPlannedMandays">Planned Mandays (MD)</label>
+                    <input
+                      id="taskPlannedMandays"
+                      name="mandays"
+                      type="text"
+                      className="form-input-field"
+                      value={formData.mandays || '1'}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}
                     />
                   </div>
 
+                  <div className="form-group-field">
+                    <label htmlFor="taskConsumedMandays">Actual / Consumed Mandays (MD)</label>
+                    <input
+                      id="taskConsumedMandays"
+                      name="consumed_mandays"
+                      type="text"
+                      className="form-input-field"
+                      value={formData.consumed_mandays || formData.mandays_consumption_se || '0'}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    />
+                  </div>
+
+                  <div className="form-group-field">
+                    <label htmlFor="taskDevProgress">Dev Progress ({formData.progress || 0}%)</label>
+                    <input
+                      id="taskDevProgress"
+                      name="progress"
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="5"
+                      className="form-input-field"
+                      value={formData.progress || 0}
+                      onChange={handleChange}
+                      disabled={!canManipulateTasks}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-grid-2col">
                   <div className="form-group-field">
                     <label htmlFor="taskCrossSprint">Cross Sprint?</label>
                     <YesNoSwitch
@@ -590,78 +802,29 @@ export function TaskEditModal({
                   </div>
 
                   <div className="form-group-field">
-                    <label htmlFor="taskCrossSprintTo">Cross Sprint to?</label>
-                    <input
-                      id="taskCrossSprintTo"
-                      name="cross_sprint_to"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="Sprint number / target"
-                      value={formData.cross_sprint_to || ''}
+                    <label htmlFor="taskCarryOver">Carry Over?</label>
+                    <YesNoSwitch
+                      id="taskCarryOver"
+                      name="carry_over"
+                      value={formData.carry_over || ''}
                       onChange={handleChange}
                       disabled={!canManipulateTasks}
                     />
                   </div>
                 </div>
 
-                <div className="form-grid-2col">
-                  <div className="form-group-field">
-                    <label htmlFor="taskTicket1stShown">Ticket 1st shown in Sprint</label>
-                    <input
-                      id="taskTicket1stShown"
-                      name="ticket_1st_shown"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="e.g. Sprint 7"
-                      value={formData.ticket_1st_shown || ''}
-                      onChange={handleChange}
-                      disabled={!canManipulateTasks}
-                    />
-                  </div>
-
-                  <div className="form-group-field">
-                    <label htmlFor="taskStartDevInSprint">Start Development in Sprint</label>
-                    <input
-                      id="taskStartDevInSprint"
-                      name="start_dev_in_sprint"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="e.g. Sprint 8"
-                      value={formData.start_dev_in_sprint || ''}
-                      onChange={handleChange}
-                      disabled={!canManipulateTasks}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-grid-2col">
-                  <div className="form-group-field">
-                    <label htmlFor="taskMandaysSe">Mandays Consumption (Software Engineer)</label>
-                    <input
-                      id="taskMandaysSe"
-                      name="mandays_consumption_se"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="SE Mandays"
-                      value={formData.mandays_consumption_se || ''}
-                      onChange={handleChange}
-                      disabled={!canManipulateTasks}
-                    />
-                  </div>
-
-                  <div className="form-group-field">
-                    <label htmlFor="taskMandaysItpd">Mandays Consumption ITPD (Test & Pre-UAT)</label>
-                    <input
-                      id="taskMandaysItpd"
-                      name="mandays_consumption_itpd"
-                      type="text"
-                      className="form-input-field"
-                      placeholder="ITPD Mandays"
-                      value={formData.mandays_consumption_itpd || ''}
-                      onChange={handleChange}
-                      disabled={!canManipulateTasks}
-                    />
-                  </div>
+                <div className="form-group-field">
+                  <label htmlFor="taskCarryOverReason">Carry-over Reason</label>
+                  <textarea
+                    id="taskCarryOverReason"
+                    name="carry_over_reason"
+                    className="form-input-field"
+                    rows="2"
+                    placeholder="Explanation if ticket moved across sprint cycles..."
+                    value={formData.carry_over_reason || ''}
+                    onChange={handleChange}
+                    disabled={!canManipulateTasks}
+                  />
                 </div>
               </div>
             )}

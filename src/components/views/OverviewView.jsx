@@ -3,14 +3,35 @@ import { STAGES, PRIORITIES } from '../../constants';
 import { PriorityBadge } from '../common/PriorityBadge';
 import { Avatar } from '../common/Avatar';
 import { splitMultiValue } from '../../utils/taskHelpers';
+import { useSprint } from '../../context/SprintContext';
+import { AlertTriangleIcon, CheckCircleIcon } from '../common/Icons';
 
-export function OverviewView({ tasks, onTaskClick }) {
+export function OverviewView({ tasks: propTasks, onTaskClick }) {
+  const { sprints, selectedSprintId, setSelectedSprintId, getTasksForSprint, getSprintMetrics } = useSprint();
+
+  // Use tasks from SprintContext according to selected sprint
+  const activeTasks = useMemo(() => {
+    return getTasksForSprint(selectedSprintId);
+  }, [selectedSprintId, getTasksForSprint]);
+
+  // Sprint master record for selected sprint
+  const currentSprintRecord = useMemo(() => {
+    if (selectedSprintId === 'all') return null;
+    return sprints.find(s => s.id === selectedSprintId) || sprints[sprints.length - 1];
+  }, [sprints, selectedSprintId]);
+
+  // Sprint metrics
+  const sprintMetrics = useMemo(() => {
+    return getSprintMetrics(selectedSprintId);
+  }, [selectedSprintId, getSprintMetrics]);
+
   const metrics = useMemo(() => {
+    const tasks = activeTasks;
     const total = tasks.length;
-    const completed = tasks.filter(t => t.stage === STAGES.COMPLETED).length;
-    const inProgress = tasks.filter(t => t.stage === STAGES.IN_PROGRESS).length;
-    const inReview = tasks.filter(t => t.stage === STAGES.REVIEW).length;
-    const todo = tasks.filter(t => !t.stage || t.stage === STAGES.TODO).length;
+    const completed = tasks.filter(t => t.stage === STAGES.COMPLETED || t.ticket_status === 'Deployed').length;
+    const inProgress = tasks.filter(t => t.stage === STAGES.IN_PROGRESS || t.ticket_status === 'Development').length;
+    const inReview = tasks.filter(t => t.stage === STAGES.REVIEW || t.ticket_status === 'UAT' || t.ticket_status === 'Code Review').length;
+    const todo = tasks.filter(t => !t.stage || t.stage === STAGES.TODO || t.ticket_status === 'Proposed').length;
     const active = inProgress + inReview;
 
     // Safely parse mandays
@@ -21,7 +42,7 @@ export function OverviewView({ tasks, onTaskClick }) {
       const md = parseFloat(t.mandays) || 0;
       if (md > 0 && md <= 200) {
         totalVelocity += md;
-        if (t.stage === STAGES.COMPLETED) {
+        if (t.stage === STAGES.COMPLETED || t.ticket_status === 'Deployed') {
           completedVelocity += md;
         }
       }
@@ -35,7 +56,7 @@ export function OverviewView({ tasks, onTaskClick }) {
     const medPriority = tasks.filter(t => t.priority === PRIORITIES.MEDIUM).length;
     const lowPriority = tasks.filter(t => t.priority === PRIORITIES.LOW).length;
 
-    // Platform breakdown (properly accounts for multi-value platforms)
+    // Platform breakdown
     const platformMap = {};
     tasks.forEach(t => {
       const pList = splitMultiValue(t.platforms || t.platform);
@@ -47,7 +68,7 @@ export function OverviewView({ tasks, onTaskClick }) {
         platformMap[p].total += 1;
         const md = parseFloat(t.mandays) || 0;
         if (md > 0 && md <= 200) platformMap[p].mandays += (md / targetPlatforms.length);
-        if (t.stage === STAGES.COMPLETED) platformMap[p].completed += 1;
+        if (t.stage === STAGES.COMPLETED || t.ticket_status === 'Deployed') platformMap[p].completed += 1;
         if (t.stage === STAGES.IN_PROGRESS || t.stage === STAGES.REVIEW) platformMap[p].inProgress += 1;
       });
     });
@@ -62,8 +83,13 @@ export function OverviewView({ tasks, onTaskClick }) {
 
     // High priority active tasks needing attention
     const urgentTasks = tasks
-      .filter(t => t.priority === PRIORITIES.HIGH && t.stage !== STAGES.COMPLETED)
+      .filter(t => (t.priority === PRIORITIES.HIGH || t.blocking_tasks) && t.stage !== STAGES.COMPLETED)
       .slice(0, 6);
+
+    // Carry-over and deprioritized
+    const carryOverTasks = tasks.filter(t => t.carry_over === 'Yes' || t.is_carry_over);
+    const deprioritizedTasks = tasks.filter(t => (t.ticket_status || '').toLowerCase().includes('deprio'));
+    const overdueTasks = tasks.filter(t => t.is_overdue || (t.expected_deployment_date && new Date(t.expected_deployment_date) < new Date() && t.stage !== STAGES.COMPLETED));
 
     return {
       total,
@@ -81,12 +107,50 @@ export function OverviewView({ tasks, onTaskClick }) {
       medPriority,
       lowPriority,
       platforms,
-      urgentTasks
+      urgentTasks,
+      carryOverTasks,
+      deprioritizedTasks,
+      overdueTasks
     };
-  }, [tasks]);
+  }, [activeTasks]);
 
   return (
-    <div className="view-panel overview-dashboard-panel">
+    <div className="view-panel overview-dashboard-panel animate-fade-in">
+      {/* 0. UNIVERSAL SPRINT SELECTOR AT TOP OF DASHBOARD */}
+      <div className="dashboard-sprint-selector-bar card-styled">
+        <div className="selector-title-block">
+          <span className="selector-label">Sprint Scope:</span>
+          <select
+            value={selectedSprintId}
+            onChange={e => setSelectedSprintId(e.target.value)}
+            className="dashboard-sprint-dropdown"
+          >
+            <option value="all">All Sprints (Aggregated)</option>
+            {sprints.map(s => (
+              <option key={s.id} value={s.id}>
+                {s.name} ({s.status}) — {s.startDate} to {s.endDate}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {currentSprintRecord && (
+          <div className="dashboard-sprint-meta-chips">
+            <span className={`sprint-status-pill status-${currentSprintRecord.status.toLowerCase()}`}>
+              {currentSprintRecord.status}
+            </span>
+            <span className={`sprint-health-pill health-${(currentSprintRecord.health || 'on track').toLowerCase().replace(' ', '-')}`}>
+              Health: {currentSprintRecord.health || 'On Track'}
+            </span>
+            <span className="sprint-phase-chip">
+              Current Phase: <strong>{currentSprintRecord.currentPhase}</strong>
+            </span>
+            <span className="sprint-cap-chip">
+              Capacity: <strong>{currentSprintRecord.capacity} MD</strong>
+            </span>
+          </div>
+        )}
+      </div>
       {/* 1. Top KPI Metric Cards */}
       <div className="overview-kpis">
         <div className="kpi-card">
@@ -315,7 +379,103 @@ export function OverviewView({ tasks, onTaskClick }) {
         </div>
       </div>
 
-      {/* 4. Sprint Health & Tech Stack Banner */}
+      {/* 4. Sprint Capacity vs Consumed Mandays & Phase Progress */}
+      <div className="overview-analytics-grid sprint-analytics-row">
+        {/* Capacity vs Planned & Consumed Mandays */}
+        <div className="overview-section-card">
+          <div className="section-card-header">
+            <div>
+              <h3 className="section-card-title">Sprint Capacity & Manday Burn</h3>
+              <p className="section-card-desc">Capacity vs estimated planned workload vs consumed hours</p>
+            </div>
+            <span className={`section-badge-counter ${sprintMetrics.isOverCapacity ? 'alert' : ''}`}>
+              {sprintMetrics.utilizationRate}% Utilized
+            </span>
+          </div>
+
+          <div className="sprint-cap-burn-widget">
+            <div className="cap-burn-metrics-row">
+              <div className="cap-burn-box">
+                <span className="box-label">Capacity</span>
+                <span className="box-val">{currentSprintRecord?.capacity || 180} MD</span>
+              </div>
+              <div className="cap-burn-box">
+                <span className="box-label">Planned</span>
+                <span className="box-val">{sprintMetrics.plannedMandays} MD</span>
+              </div>
+              <div className="cap-burn-box">
+                <span className="box-label">Consumed</span>
+                <span className="box-val">{sprintMetrics.consumedMandays} MD</span>
+              </div>
+              <div className="cap-burn-box">
+                <span className="box-label">Remaining</span>
+                <span className={`box-val ${sprintMetrics.remainingCapacity < 0 ? 'text-danger' : 'text-success'}`}>
+                  {sprintMetrics.remainingCapacity} MD
+                </span>
+              </div>
+            </div>
+
+            <div className="cap-track-wrap">
+              <div className="cap-track-labels">
+                <span>Utilization ({sprintMetrics.utilizationRate}%)</span>
+                <span>Limit: 100%</span>
+              </div>
+              <div className="progress-bar-track">
+                <div
+                  className={`progress-bar-fill ${sprintMetrics.isOverCapacity ? 'fill-warning' : 'fill-primary'}`}
+                  style={{ width: `${Math.min(100, sprintMetrics.utilizationRate)}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Phase Progress & Deployment Readiness */}
+        <div className="overview-section-card">
+          <div className="section-card-header">
+            <div>
+              <h3 className="section-card-title">Phases & Deployment Readiness</h3>
+              <p className="section-card-desc">11 phase gates and deployment candidate readiness</p>
+            </div>
+            <span className="section-badge-counter">
+              {currentSprintRecord ? currentSprintRecord.currentPhase : 'Sprint Overview'}
+            </span>
+          </div>
+
+          <div className="phase-deploy-widget">
+            <div className="phase-stepper-mini-list">
+              {(currentSprintRecord?.phases || []).slice(0, 5).map(ph => (
+                <div key={ph.id} className="phase-mini-row">
+                  <span className="phase-mini-dot" style={{ backgroundColor: ph.status === 'Completed' ? '#10b981' : ph.status === 'In Progress' ? '#0284c7' : '#94a3b8' }} />
+                  <span className="phase-mini-name">{ph.name}</span>
+                  <span className="phase-mini-pct">{ph.progress}%</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="deployment-readiness-strip">
+              <div className="readiness-item ready">
+                <span className="readiness-count">{sprintMetrics.readyToDeployTickets}</span>
+                <span className="readiness-lbl">Ready to Deploy</span>
+              </div>
+              <div className="readiness-item deployed">
+                <span className="readiness-count">{sprintMetrics.deployedTickets}</span>
+                <span className="readiness-lbl">Deployed</span>
+              </div>
+              <div className="readiness-item carry">
+                <span className="readiness-count">{metrics.carryOverTasks.length}</span>
+                <span className="readiness-lbl">Carry Over</span>
+              </div>
+              <div className="readiness-item deprio">
+                <span className="readiness-count">{metrics.deprioritizedTasks.length}</span>
+                <span className="readiness-lbl">Deprioritized</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. Sprint Health & Tech Stack Banner */}
       <div className="overview-health-bar">
         <div className="health-stat">
           <span className="health-indicator-pulse" />

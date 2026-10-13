@@ -4,10 +4,15 @@ import { useAuth } from '../../context/AuthContext';
 import {
   PhilipMorrisLogo,
   HomeIcon,
-  BoardIcon,
+  LayersIcon,
+  InboxIcon,
   CheckCircleIcon,
-  UsersIcon,
+  BoardIcon,
+  GitBranchIcon,
   CalendarIcon,
+  BarChartIcon,
+  SlidersIcon,
+  UsersIcon,
   SettingsIcon,
   HeadsetIcon,
   LogoutIcon
@@ -25,17 +30,44 @@ export function Sidebar({ currentView, onViewChange, onOpenUserControl }) {
 
         <nav className="sidebar-nav">
           <button
-            className={`nav-icon-btn ${currentView === VIEWS.OVERVIEW ? 'active' : ''}`}
-            onClick={() => onViewChange(VIEWS.OVERVIEW)}
-            title="Overview"
-            aria-label="Overview"
+            className={`nav-icon-btn ${currentView === VIEWS.DASHBOARD ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.DASHBOARD)}
+            title="Dashboard"
+            aria-label="Dashboard"
           >
             <HomeIcon />
           </button>
 
           <button
-            className={`nav-icon-btn ${currentView === VIEWS.BOARD ? 'active' : ''}`}
-            onClick={() => onViewChange(VIEWS.BOARD)}
+            className={`nav-icon-btn ${currentView === VIEWS.SPRINTS || currentView === VIEWS.SPRINT_DETAIL ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.SPRINTS)}
+            title="Sprints (Sprint 1 - 10)"
+            aria-label="Sprints"
+          >
+            <LayersIcon />
+          </button>
+
+          <button
+            className={`nav-icon-btn ${currentView === VIEWS.BACKLOG ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.BACKLOG)}
+            title="Backlog"
+            aria-label="Backlog"
+          >
+            <InboxIcon />
+          </button>
+
+          <button
+            className={`nav-icon-btn ${currentView === VIEWS.TICKET_LIST ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.TICKET_LIST)}
+            title="Ticket List"
+            aria-label="Ticket List"
+          >
+            <CheckCircleIcon />
+          </button>
+
+          <button
+            className={`nav-icon-btn ${currentView === VIEWS.KANBAN ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.KANBAN)}
             title="Kanban Board"
             aria-label="Kanban Board"
           >
@@ -43,30 +75,39 @@ export function Sidebar({ currentView, onViewChange, onOpenUserControl }) {
           </button>
 
           <button
-            className={`nav-icon-btn ${currentView === VIEWS.LIST ? 'active' : ''}`}
-            onClick={() => onViewChange(VIEWS.LIST)}
-            title="Task List"
-            aria-label="Task List"
+            className={`nav-icon-btn ${currentView === VIEWS.TIMELINE ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.TIMELINE)}
+            title="Timeline"
+            aria-label="Timeline"
           >
-            <CheckCircleIcon />
-          </button>
-
-          <button
-            className={`nav-icon-btn ${currentView === VIEWS.USERS ? 'active' : ''}`}
-            onClick={() => onViewChange(VIEWS.USERS)}
-            title="User Control Panel"
-            aria-label="User Control Panel"
-          >
-            <UsersIcon />
+            <GitBranchIcon />
           </button>
 
           <button
             className={`nav-icon-btn ${currentView === VIEWS.CALENDAR ? 'active' : ''}`}
             onClick={() => onViewChange(VIEWS.CALENDAR)}
-            title="Calendar Timeline"
-            aria-label="Calendar Timeline"
+            title="Calendar"
+            aria-label="Calendar"
           >
             <CalendarIcon />
+          </button>
+
+          <button
+            className={`nav-icon-btn ${currentView === VIEWS.REPORTS ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.REPORTS)}
+            title="Reports & Sprint Comparison"
+            aria-label="Reports"
+          >
+            <BarChartIcon />
+          </button>
+
+          <button
+            className={`nav-icon-btn ${currentView === VIEWS.CONFIGURATION ? 'active' : ''}`}
+            onClick={() => onViewChange(VIEWS.CONFIGURATION)}
+            title="Sprint Configuration"
+            aria-label="Configuration"
+          >
+            <SlidersIcon />
           </button>
         </nav>
       </div>

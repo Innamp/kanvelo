@@ -29,20 +29,36 @@ export const PRIORITY_WEIGHTS = {
 };
 
 export const VIEWS = {
+  DASHBOARD: 'overview',
   OVERVIEW: 'overview',
+  SPRINTS: 'sprints',
+  SPRINT_DETAIL: 'sprint-detail',
+  BACKLOG: 'backlog',
+  TICKET_LIST: 'list',
   LIST: 'list',
+  KANBAN: 'board',
   BOARD: 'board',
+  TIMELINE: 'timeline',
   CALENDAR: 'calendar',
+  REPORTS: 'reports',
+  CONFIGURATION: 'configuration',
   DOCUMENTS: 'documents',
   MESSAGES: 'messages',
   USERS: 'users'
 };
 
 export const SPRINTS = [
-  { id: 'sprint-10', label: 'Sprint 10 (Current)' },
+  { id: 'all', label: 'All Sprints' },
+  { id: 'sprint-10', label: 'Sprint 10 (Active)' },
   { id: 'sprint-9', label: 'Sprint 9' },
   { id: 'sprint-8', label: 'Sprint 8' },
-  { id: 'all', label: 'All Sprints' }
+  { id: 'sprint-7', label: 'Sprint 7' },
+  { id: 'sprint-6', label: 'Sprint 6' },
+  { id: 'sprint-5', label: 'Sprint 5' },
+  { id: 'sprint-4', label: 'Sprint 4' },
+  { id: 'sprint-3', label: 'Sprint 3' },
+  { id: 'sprint-2', label: 'Sprint 2' },
+  { id: 'sprint-1', label: 'Sprint 1' }
 ];
 
 export const DEMO_AVATARS = [
