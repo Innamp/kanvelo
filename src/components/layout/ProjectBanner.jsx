@@ -16,7 +16,7 @@ export function ProjectBanner() {
       <div className="project-title-group">
         <h1>Kanvelo</h1>
         <div className="project-meta-line">
-          <span>Client: <strong style={{ color: 'var(--text-primary)' }}>Arcadia Solutions</strong></span>
+          <span>Client: <strong style={{ color: 'var(--text-primary)' }}>Sampoerna</strong></span>
           <span>•</span>
           <span>Timeline: <strong style={{ color: 'var(--text-primary)' }}>May 20 – June 30, 2025</strong></span>
           <span>•</span>

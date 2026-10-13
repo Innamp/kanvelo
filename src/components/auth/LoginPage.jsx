@@ -189,7 +189,7 @@ export function LoginPage() {
 
           {/* Footer note */}
           <div className="login-card-footer">
-            <span>Arcadia Solutions Enterprise • Kanvelo Sprint 8</span>
+            <span>Sampoerna Enterprise • Kanvelo Sprint 8</span>
           </div>
         </div>
       </div>
