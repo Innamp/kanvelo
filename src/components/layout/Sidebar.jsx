@@ -20,7 +20,7 @@ export function Sidebar({ currentView, onViewChange, onOpenUserControl }) {
     <aside className="app-sidebar" aria-label="Main Navigation">
       <div className="sidebar-top">
         <div className="brand-mark" title="Philip Morris International">
-          <PhilipMorrisLogo size={28} />
+          <PhilipMorrisLogo size={30} />
         </div>
 
         <nav className="sidebar-nav">

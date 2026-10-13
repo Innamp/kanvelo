@@ -1,79 +1,20 @@
-import React from 'react';
+import pmiLogoSvg from '../../assets/pmi-logo.svg';
 
-export function PhilipMorrisLogo({ size = 26, ...props }) {
+export function PhilipMorrisLogo({ size = 32, className = '', ...props }) {
   return (
-    <svg
+    <img
+      src={pmiLogoSvg}
+      alt="Philip Morris International"
       width={size}
       height={size}
-      viewBox="0 0 48 48"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
+      className={`pmi-crest-logo ${className}`.trim()}
+      style={{ objectFit: 'contain', display: 'block', maxWidth: '100%', maxHeight: '100%' }}
       {...props}
-    >
-      {/* Coronet / Royal Crown */}
-      <circle cx="17.5" cy="5" r="1.1" />
-      <circle cx="20.5" cy="3.5" r="1.1" />
-      <circle cx="24" cy="2.5" r="1.3" />
-      <circle cx="27.5" cy="3.5" r="1.1" />
-      <circle cx="30.5" cy="5" r="1.1" />
-      <path d="M16.5 8.5l1.5-2.5 2.5 2 3.5-4.5 3.5 4.5 2.5-2 1.5 2.5z" />
-      <rect x="16" y="8.5" width="16" height="2" rx="0.5" />
-
-      {/* Central Heraldic Shield */}
-      <path
-        d="M18.5 12h11c.2 5 .5 10 0 13-1 6-5.5 8.5-5.5 8.5s-4.5-2.5-5.5-8.5c-.5-3-.2-8 0-13z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-      {/* Inner Shield border */}
-      <path
-        d="M20 13.5h8c0 4.2.3 8.2-.2 10.8-.8 4.2-3.8 6.2-3.8 6.2s-3-2-3.8-6.2c-.5-2.6-.2-6.6-.2-10.8z"
-        fill="currentColor"
-        fillOpacity="0.18"
-        stroke="currentColor"
-        strokeWidth="0.8"
-      />
-
-      {/* Central "PM" Monogram inside shield */}
-      <path
-        d="M21.2 16.5h2.2c1.1 0 1.9.5 1.9 1.5 0 .9-.8 1.4-1.9 1.4h-1v2.8h-1.2v-5.7zm1.2 1.9h.8c.4 0 .8-.1.8-.5s-.4-.5-.8-.5h-.8v1z"
-      />
-      <path
-        d="M25.4 16.5h1.2l1.1 3.2 1.1-3.2h1.2v5.7h-1.1v-3.6l-1 2.8h-.5l-1-2.8v3.6h-1v-5.7z"
-      />
-
-      {/* Left Supporter: Rampant Lion */}
-      <path d="M15.5 14c-.6-.8-1.5-1.2-2.3-.8-.8.3-1.1 1.2-.7 2-.5.1-1 .5-1.3 1-.4.8-.3 1.8.2 2.5l-.8.6c-.4.3-.5.9-.2 1.3.3.4.9.5 1.3.2l1.2-.8c.3.9.7 1.6 1.3 2.1l-1.3 2c-.3.4-.2 1 .2 1.3.4.3 1 .2 1.3-.2l1.3-1.8c.7.4 1.4.6 2.2.6v-1.6c-.6-.1-1.1-.3-1.5-.6l.7-1.3c.3-.5.2-1.2-.3-1.6-.4-.4-.6-.9-.6-1.5 0-.8.4-1.5 1-1.9v-2c-.5.3-1.2.3-1.8.2-.5-.1-.8-.5-1-.9.3-.2.5-.5.5-.9 0-.4-.4-.8-.9-.8z" />
-      <path d="M12 23c-.7-1-1.1-2.2-.9-3.5.1-.6.5-1 1-1.1.2 0 .3.1.4.2-.2.4-.2.8-.1 1.2.2.8.7 1.5 1.2 2l-1.6 1.2z" />
-
-      {/* Right Supporter: Rampant Horse */}
-      <path d="M32.5 14c.6-.8 1.5-1.2 2.3-.8.8.3 1.1 1.2.7 2 .5.1 1 .5 1.3 1 .4.8.3 1.8-.2 2.5l.8.6c.4.3.5.9.2 1.3-.3.4-.9.5-1.3.2l-1.2-.8c-.3.9-.7 1.6-1.3 2.1l1.3 2c.3.4.2 1-.2 1.3-.4.3-1 .2-1.3-.2l-1.3-1.8c-.7.4-1.4.6-2.2.6v-1.6c.6-.1 1.1-.3 1.5-.6l-.7-1.3c-.3-.5-.2-1.2.3-1.6.4-.4.6-.9.6-1.5 0-.8-.4-1.5-1-1.9v-2c.5.3 1.2.3 1.8.2.5-.1.8-.5 1-.9-.3-.2-.5-.5-.5-.9 0-.4-.4-.8-.9-.8z" />
-      <path d="M36 23c.7-1 1.1-2.2-.9-3.5-.1-.6-.5-1-1-1.1-.2 0-.3.1-.4.2.2.4.2.8.1 1.2-.2.8-.7 1.5-1.2 2l1.6 1.2z" />
-
-      {/* Bottom Heraldic Scroll / Ribbon */}
-      <path d="M10.5 35c4 2 8.5 2.8 13.5 2.8s9.5-.8 13.5-2.8l1.5 3.2c-4.5 2.2-9.5 3-15 3s-10.5-.8-15-3l1.5-3.2z" />
-      <path d="M10.5 35l-3.5-1.5v3.8l3.5 1-1.5-3.3zm27 0l3.5-1.5v3.8l-3.5 1 1.5-3.3z" />
-
-      {/* Ribbon PMI Text */}
-      <text
-        x="24"
-        y="38.2"
-        fontSize="3.2"
-        fontFamily="sans-serif"
-        fontWeight="bold"
-        textAnchor="middle"
-        letterSpacing="0.8"
-        fill="#111827"
-      >
-        PMI
-      </text>
-    </svg>
+    />
   );
 }
 
-export function StarIcon({ size = 26, ...props }) {
+export function StarIcon({ size = 36, ...props }) {
   return <PhilipMorrisLogo size={size} {...props} />;
 }
 

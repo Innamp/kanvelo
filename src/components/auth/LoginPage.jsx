@@ -38,7 +38,7 @@ export function LoginPage() {
           {/* Brand Header */}
           <div className="login-brand-center">
             <div className="login-brand-mark" title="Philip Morris International">
-              <PhilipMorrisLogo size={28} />
+              <PhilipMorrisLogo size={32} />
             </div>
             <div className="login-brand-meta">
               <div className="login-brand-title-row">

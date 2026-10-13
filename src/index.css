@@ -121,18 +121,22 @@ body {
 .brand-mark {
   width: 44px;
   height: 44px;
-  background: #147a63;
-  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  padding: 3px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
 .brand-mark:hover {
   transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .sidebar-nav {
@@ -2524,16 +2528,18 @@ body {
 }
 
 .login-brand-mark {
-  width: 46px;
-  height: 46px;
-  background: #111827;
-  color: #f6c445;
+  width: 50px;
+  height: 50px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  padding: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .login-brand-meta {
