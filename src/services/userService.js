@@ -9,6 +9,7 @@ export const DEFAULT_USERS = [
     id: 'usr-1',
     name: 'John Doe',
     email: 'john.doe@novaboard.io',
+    password: 'admin123',
     role: ROLES.ADMIN,
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop'
   },
@@ -16,6 +17,7 @@ export const DEFAULT_USERS = [
     id: 'usr-2',
     name: 'Sarah Jenkins',
     email: 'sarah.j@novaboard.io',
+    password: 'sarah123',
     role: ROLES.CONTRIBUTOR,
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop'
   },
@@ -23,6 +25,7 @@ export const DEFAULT_USERS = [
     id: 'usr-3',
     name: 'Alex Rivera',
     email: 'alex.r@novaboard.io',
+    password: 'alex123',
     role: ROLES.CONTRIBUTOR,
     avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&h=80&fit=crop'
   },
@@ -30,10 +33,25 @@ export const DEFAULT_USERS = [
     id: 'usr-4',
     name: 'Guest Viewer',
     email: 'guest.viewer@novaboard.io',
+    password: 'viewer123',
     role: ROLES.VIEWER,
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop'
   }
 ];
+
+function normalizeUsersWithPasswords(usersList) {
+  if (!Array.isArray(usersList)) return DEFAULT_USERS;
+  return usersList.map(u => {
+    if (!u.password) {
+      const match = DEFAULT_USERS.find(d => d.id === u.id || (d.email && u.email && d.email.toLowerCase() === u.email.toLowerCase()));
+      return {
+        ...u,
+        password: match ? match.password : 'Kanvelo@2026'
+      };
+    }
+    return u;
+  });
+}
 
 class UserService {
   constructor() {
@@ -60,8 +78,9 @@ class UserService {
         if (res.ok) {
           const data = await res.json();
           if (data && data.users && data.users.length > 0) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.users));
-            return data.users;
+            const normalized = normalizeUsersWithPasswords(data.users);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+            return normalized;
           }
         }
       } catch (err) {
@@ -72,7 +91,10 @@ class UserService {
     const cached = localStorage.getItem(STORAGE_KEY);
     if (cached) {
       try {
-        return JSON.parse(cached);
+        const parsed = JSON.parse(cached);
+        const normalized = normalizeUsersWithPasswords(parsed);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+        return normalized;
       } catch (e) {
         console.error('Failed to parse cached users', e);
       }

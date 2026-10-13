@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { ROLE_LABELS } from '../../constants';
 
 export function Header({ search, onSearchChange, onOpenUserControl }) {
-  const { currentUser, users, setCurrentUser, canManageUsers, logout } = useAuth();
+  const { currentUser, canManageUsers, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -113,32 +113,7 @@ export function Header({ search, onSearchChange, onOpenUserControl }) {
                 </div>
               )}
 
-              {/* Quick Switch Profile / Roles for testing */}
-              <div className="dropdown-switch-section">
-                <span className="switch-heading">Switch Active Profile</span>
-                <div className="profile-switch-list">
-                  {users.map(u => (
-                    <button
-                      key={u.id}
-                      className={`switch-user-btn ${u.id === currentUser?.id ? 'active' : ''}`}
-                      type="button"
-                      onClick={() => {
-                        setCurrentUser(u);
-                        setMenuOpen(false);
-                      }}
-                    >
-                      <Avatar name={u.name} size={28} className="switch-avatar" />
-                      <div className="switch-info">
-                        <strong>{u.name}</strong>
-                        <span className={`role-dot role-${u.role}`}>
-                          {ROLE_LABELS[u.role]}
-                        </span>
-                      </div>
-                      {u.id === currentUser?.id && <span className="switch-active-check">✓</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
+
 
               {/* Sign Out Action */}
               <div className="dropdown-logout-section">

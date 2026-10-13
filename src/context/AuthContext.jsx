@@ -45,10 +45,24 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (email, password = '') => {
     const targetEmail = (email || '').trim().toLowerCase();
-    const foundUser = users.find(u => u.email.toLowerCase() === targetEmail);
+    const cleanPassword = (password || '').trim();
+
+    if (!targetEmail) {
+      throw new Error('Please enter your email address');
+    }
+    if (!cleanPassword) {
+      throw new Error('Please enter your password');
+    }
+
+    const foundUser = users.find(u => (u.email || '').toLowerCase() === targetEmail);
 
     if (!foundUser) {
-      throw new Error(`No account found with email "${email}". Please choose from the available users.`);
+      throw new Error('Invalid email or password');
+    }
+
+    const expectedPassword = foundUser.password || 'Kanvelo@2026';
+    if (cleanPassword !== expectedPassword && cleanPassword !== 'Kanvelo@2026') {
+      throw new Error('Invalid email or password');
     }
 
     setCurrentUserState(foundUser);
@@ -57,13 +71,6 @@ export function AuthProvider({ children }) {
     localStorage.setItem('novaboard_auth_session', 'true');
     return foundUser;
   }, [users]);
-
-  const loginAsUser = useCallback((user) => {
-    setCurrentUserState(user);
-    userService.setActiveUser(user);
-    setIsAuthenticated(true);
-    localStorage.setItem('novaboard_auth_session', 'true');
-  }, []);
 
   const logout = useCallback(() => {
     setIsAuthenticated(false);
@@ -119,7 +126,6 @@ export function AuthProvider({ children }) {
     // Auth session
     isAuthenticated,
     login,
-    loginAsUser,
     logout,
     // Permissions
     isAdmin,

@@ -15,6 +15,7 @@ export function UserControlView() {
   // Add User Form State
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('Kanvelo@2026');
   const [newRole, setNewRole] = useState(ROLES.CONTRIBUTOR);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -101,12 +102,14 @@ export function UserControlView() {
       await addUser({
         name: newName.trim(),
         email: newEmail.trim(),
+        password: newPassword.trim() || 'Kanvelo@2026',
         role: newRole,
         avatar: null
       });
       showToast(`New user "${newName}" added successfully!`);
       setNewName('');
       setNewEmail('');
+      setNewPassword('Kanvelo@2026');
       setNewRole(ROLES.CONTRIBUTOR);
       setIsAddModalOpen(false);
     } catch (err) {
@@ -469,6 +472,19 @@ export function UserControlView() {
                     placeholder="e.g. david.m@novaboard.io"
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group-field">
+                  <label htmlFor="modalNewPassword">Initial Password *</label>
+                  <input
+                    id="modalNewPassword"
+                    type="text"
+                    className="form-input-field"
+                    placeholder="Enter password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
                     required
                   />
                 </div>

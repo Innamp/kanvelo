@@ -23,24 +23,35 @@ try {
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             email TEXT NOT NULL,
+            password TEXT DEFAULT 'Kanvelo@2026',
             role TEXT NOT NULL DEFAULT 'contributor',
             avatar TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     ");
 
+    try {
+        $pdo->exec("ALTER TABLE users ADD COLUMN password TEXT DEFAULT 'Kanvelo@2026'");
+    } catch (Exception $ignored) {}
+
     $userCount = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
     if ($userCount == 0) {
         $defaultUsers = [
-            ['usr-1', 'John Doe', 'john.doe@novaboard.io', 'administrator', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop'],
-            ['usr-2', 'Sarah Jenkins', 'sarah.j@novaboard.io', 'contributor', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop'],
-            ['usr-3', 'Alex Rivera', 'alex.r@novaboard.io', 'contributor', 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&h=80&fit=crop'],
-            ['usr-4', 'Guest Viewer', 'guest.viewer@novaboard.io', 'viewer', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop']
+            ['usr-1', 'John Doe', 'john.doe@novaboard.io', 'admin123', 'administrator', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop'],
+            ['usr-2', 'Sarah Jenkins', 'sarah.j@novaboard.io', 'sarah123', 'contributor', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop'],
+            ['usr-3', 'Alex Rivera', 'alex.r@novaboard.io', 'alex123', 'contributor', 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&h=80&fit=crop'],
+            ['usr-4', 'Guest Viewer', 'guest.viewer@novaboard.io', 'viewer123', 'viewer', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop']
         ];
-        $insertStmt = $pdo->prepare("INSERT INTO users (id, name, email, role, avatar) VALUES (?, ?, ?, ?, ?)");
+        $insertStmt = $pdo->prepare("INSERT INTO users (id, name, email, password, role, avatar) VALUES (?, ?, ?, ?, ?, ?)");
         foreach ($defaultUsers as $u) {
             $insertStmt->execute($u);
         }
+    } else {
+        // Ensure default users have passwords populated
+        $pdo->exec("UPDATE users SET password = 'admin123' WHERE email = 'john.doe@novaboard.io' AND (password IS NULL OR password = '')");
+        $pdo->exec("UPDATE users SET password = 'sarah123' WHERE email = 'sarah.j@novaboard.io' AND (password IS NULL OR password = '')");
+        $pdo->exec("UPDATE users SET password = 'alex123' WHERE email = 'alex.r@novaboard.io' AND (password IS NULL OR password = '')");
+        $pdo->exec("UPDATE users SET password = 'viewer123' WHERE email = 'guest.viewer@novaboard.io' AND (password IS NULL OR password = '')");
     }
 } catch (Exception $e) {
     http_response_code(500);
@@ -62,6 +73,7 @@ switch ($action) {
         $id = $body['id'] ?? null;
         $name = trim($body['name'] ?? '');
         $email = trim($body['email'] ?? '');
+        $password = trim($body['password'] ?? 'Kanvelo@2026');
         $role = $body['role'] ?? 'contributor';
         $avatar = $body['avatar'] ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop';
 
@@ -80,15 +92,16 @@ switch ($action) {
         }
 
         $stmt = $pdo->prepare("
-            INSERT INTO users (id, name, email, role, avatar)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO users (id, name, email, password, role, avatar)
+            VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 name = excluded.name,
                 email = excluded.email,
+                password = COALESCE(excluded.password, users.password),
                 role = excluded.role,
                 avatar = excluded.avatar
         ");
-        $stmt->execute([$id, $name, $email, $role, $avatar]);
+        $stmt->execute([$id, $name, $email, $password, $role, $avatar]);
 
         echo json_encode(['status' => 'success', 'user' => [
             'id' => $id, 'name' => $name, 'email' => $email, 'role' => $role, 'avatar' => $avatar
